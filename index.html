@@ -192,7 +192,7 @@
             Choose a pickup drop, build your preorder request, copy the message, and send it by Instagram DM.
           </p>
           <p class="mt-3 text-sm font-semibold text-muted">
-            Preorders close the day before pickup at 8 PM. Sample dates below come from the pickup-date source and should be updated weekly.
+            Preorders close the day before pickup at 8 PM. Pickup dates are announced weekly, so check Instagram for the latest availability.
           </p>
         </div>
 
@@ -331,7 +331,7 @@
                 Copy preorder message
               </button>
               <a
-                href="https://ig.me/m/stickyricekitchen"
+                href="https://ig.me/m/_stickyricekitchen"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="rounded-full border-2 border-white px-6 py-4 text-center text-sm font-extrabold text-white transition hover:bg-white hover:text-ube focus:outline-none focus:ring-4 focus:ring-white/30"
@@ -340,6 +340,9 @@
               </a>
             </div>
 
+            <p class="mt-4 text-sm font-bold text-mango">
+              DM us on Instagram: @_stickyricekitchen
+            </p>
             <p class="mt-5 text-sm leading-6 text-white/75">
               Copy the message first, then paste it into Instagram. Instagram DMs cannot be prefilled from this page.
             </p>
@@ -477,8 +480,26 @@
       <div>
         <h2 class="text-sm font-extrabold uppercase tracking-[0.18em] text-mango">Social</h2>
         <ul class="mt-4 space-y-3 text-white/75">
-          <li><a class="transition hover:text-mango" href="#">Instagram</a></li>
-          <li><a class="transition hover:text-mango" href="#">TikTok</a></li>
+          <li>
+            <a
+              class="transition hover:text-mango"
+              href="https://www.instagram.com/_stickyricekitchen/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+          </li>
+          <li>
+            <a
+              class="transition hover:text-mango"
+              href="https://www.tiktok.com/@stickyricekitchen"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              TikTok
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -490,7 +511,7 @@
 
   <script>
     const PREORDER_CONFIG = {
-      instagramDmUrl: "https://ig.me/m/stickyricekitchen",
+      instagramDmUrl: "https://ig.me/m/_stickyricekitchen",
       prices: {
         "Mango Sticky Rice": {
           "Classic Cup": 7,
@@ -632,7 +653,7 @@
       if (endPeriod === "AM" && endHour === 12) endHour = 0;
 
       const options = [];
-      for (let hour = startHour; hour <= endHour; hour += 1) {
+      for (let hour = startHour; hour < endHour; hour += 1) {
         options.push(formatHour(hour));
       }
 

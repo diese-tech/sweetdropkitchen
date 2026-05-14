@@ -45,9 +45,10 @@ Open `site.config.js`. Every field below maps to something on the page.
 business: {
   name: "Maya's Bakery",
   shortName: "Maya's",
-  initials: "MB",                // shown inside the header logo bubble
+  initials: "MB",                // shown inside the header logo bubble and favicon
   locationLabel: "Tampa, FL",    // shown in the hero pill + footer
-  description: "..."             // short description used for SEO + footer
+  description: "...",            // short description used for SEO, footer, and OG tags
+  siteUrl: "https://mayasbakery.com"  // optional — used for canonical URL and JSON-LD
 }
 ```
 
@@ -118,6 +119,8 @@ menu: {
         { label: "Boule",      price: 9 },
         { label: "Half-boule", price: 5 }
       ],
+      tags:      ["vegan"],          // optional — rendered as chips (e.g. "gluten-free", "vegan")
+      allergens: ["gluten"],         // optional — rendered as "Contains X" chips
       photo: "images/products/country-sourdough.jpg"  // optional
     }
   ]
@@ -137,6 +140,7 @@ pickup: {
   dates: [
     {
       id: "sat-9-14",
+      isoDate: "2026-09-14",   // ISO date — drives the "This Week" / "Next Drop" badge
       weekday: "Saturday",
       dateLabel: "9/14",
       pickupWindow: "9 AM - 12 PM",
@@ -279,6 +283,41 @@ This is a static site — no build step. Pick whichever host you already use.
 1. Push to `main`.
 2. Repo **Settings → Pages → Source: Deploy from branch → `main` / root**.
 3. Wait a minute for the URL to appear.
+
+---
+
+## SEO and social preview cards
+
+`app.js` updates the page title, meta description, and OG/Twitter tags from `site.config.js` at runtime. Googlebot runs JS and will see those values.
+
+Facebook, iMessage, and Twitter/X scrapers often do **not** run JavaScript. For correct social share previews, also update these lines directly in `index.html`:
+
+```html
+<!-- ~line 8 -->
+<title>Your Business Name</title>
+<meta name="description" content="Your description." />
+<meta property="og:title" content="Your Business Name" />
+<meta property="og:description" content="Your description." />
+<meta name="twitter:title" content="Your Business Name" />
+<meta name="twitter:description" content="Your description." />
+```
+
+If you have a hero photo at a public URL, add:
+
+```html
+<meta property="og:image" content="https://yourdomain.com/images/hero.jpg" />
+<meta name="twitter:image" content="https://yourdomain.com/images/hero.jpg" />
+```
+
+---
+
+## JavaScript-disabled users
+
+The `<noscript>` block near the top of `<body>` in `index.html` shows a fallback message for the rare browser with JS off. Update the Instagram URL inside it to match your handle:
+
+```html
+<a ... href="https://www.instagram.com/yourhandle/">DM on Instagram</a>
+```
 
 ---
 

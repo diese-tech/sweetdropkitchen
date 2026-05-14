@@ -5,7 +5,8 @@ window.SITE_CONFIG = {
     initials: "SD",
     locationLabel: "Your City, FL",
     description:
-      "A mobile-first preorder page for local food sellers who announce weekly drops, take pickup orders, and coordinate through Instagram DMs."
+      "Weekly preorder drops from a small home kitchen. Order by Instagram DM, pick up local. No checkout, no shipping.",
+    siteUrl: ""
   },
 
   theme: {
@@ -32,16 +33,23 @@ window.SITE_CONFIG = {
   hero: {
     headlineLines: ["Weekly", "Preorder Drops", "Made Simple"],
     subheadline:
-      "A mobile-first preorder page for local food sellers who announce weekly drops, take pickup orders, and coordinate through Instagram DMs.",
-    primaryCta: { label: "Preorder Now", href: "#preorder" },
-    secondaryCta: { label: "View Menu", href: "#menu" },
+      "Small-batch desserts made the day of pickup. Order by Instagram DM. No checkout, no shipping.",
+    primaryCta: { label: "Preorder this week", href: "#preorder" },
+    secondaryCta: { label: "Follow on Instagram", href: "https://www.instagram.com/sweetdropkitchen/" },
     image: {
       src: "",
-      alt: "Close-up of this week's drop."
+      alt: "This week's drop."
     }
   },
 
-  about: null,
+  about: {
+    eyebrow: "About",
+    headline: "Made by one person, in a home kitchen.",
+    body:
+      "Sweet Drop Kitchen runs as a small weekly operation. Every order is made the day of pickup, in batches small enough to keep the texture right.",
+    photo: "",
+    signedBy: "— The Sweet Drop Kitchen"
+  },
 
   menu: {
     sectionEyebrow: "Featured Menu",
@@ -51,11 +59,13 @@ window.SITE_CONFIG = {
       {
         slug: "mango-sticky-rice",
         name: "Mango Sticky Rice",
-        description: "Classic mango sticky rice prepared for preorder pickup.",
+        description: "Classic mango sticky rice with fresh mango and coconut cream.",
         sizes: [
           { label: "Cup", price: 7 },
           { label: "Box", price: 12 }
         ],
+        tags: ["gluten-free", "vegan"],
+        allergens: ["coconut"],
         photo: ""
       },
       {
@@ -66,6 +76,8 @@ window.SITE_CONFIG = {
           { label: "Cup", price: 8 },
           { label: "Box", price: 13 }
         ],
+        tags: [],
+        allergens: ["dairy", "egg"],
         photo: ""
       },
       {
@@ -76,6 +88,8 @@ window.SITE_CONFIG = {
           { label: "Cup", price: 9 },
           { label: "Box", price: 14 }
         ],
+        tags: [],
+        allergens: ["dairy"],
         photo: ""
       }
     ]
@@ -100,6 +114,7 @@ window.SITE_CONFIG = {
     dates: [
       {
         id: "tuesday-6-10",
+        isoDate: "2026-06-10",
         weekday: "Tuesday",
         dateLabel: "6/10",
         pickupWindow: "12 PM - 6 PM",
@@ -109,6 +124,7 @@ window.SITE_CONFIG = {
       },
       {
         id: "wednesday-6-11",
+        isoDate: "2026-06-11",
         weekday: "Wednesday",
         dateLabel: "6/11",
         pickupWindow: "11 AM - 6 PM",
@@ -118,6 +134,7 @@ window.SITE_CONFIG = {
       },
       {
         id: "sunday-6-15",
+        isoDate: "2026-06-15",
         weekday: "Sunday",
         dateLabel: "6/15",
         pickupWindow: "1 PM - 7 PM",
@@ -160,7 +177,8 @@ window.SITE_CONFIG = {
       { q: "Is this pickup only?", a: "Yes — local pickup only." },
       { q: "Do I need to preorder?", a: "Yes. Orders are coordinated by DM before each drop." },
       { q: "How are pickup dates announced?", a: "Pickup dates are announced on Instagram and TikTok each week." },
-      { q: "How do I place an order?", a: "Copy your preorder message from this page and send it to us by Instagram DM." }
+      { q: "How do I place an order?", a: "Copy your preorder message from this page and send it to us by Instagram DM." },
+      { q: "Where do I see allergens?", a: "Allergen and dietary tags are listed under each item on the menu. DM us if you don't see what you need." }
     ]
   },
 

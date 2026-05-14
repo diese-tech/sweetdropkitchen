@@ -213,6 +213,48 @@
     return `data:image/svg+xml;utf8,${svg.replace(/%/g, "%25").replace(/#/g, "%23")}`;
   }
 
+  // ─── Image resolution + fallback ──────────────────────────────────────────────
+  //
+  // Convention: if a photo isn't set in config, the template tries
+  //   images/hero.jpg
+  //   images/about.jpg
+  //   images/products/<slug>.jpg
+  // and falls back to a theme-aware SVG placeholder if the file is missing.
+
+  function slugify(str) {
+    return String(str || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+
+  function imgWithFallback(src, fallbackSvgUri, attrs) {
+    return `<img
+      src="${escapeHtml(src)}"
+      data-fallback="${escapeHtml(fallbackSvgUri)}"
+      ${attrs || ""}
+    />`;
+  }
+
+  function wireImageFallbacks(root) {
+    const scope = root || document;
+    scope.querySelectorAll("img[data-fallback]").forEach((img) => {
+      if (img.dataset.fallbackWired === "1") return;
+      img.dataset.fallbackWired = "1";
+      img.addEventListener("error", function handleError() {
+        img.removeEventListener("error", handleError);
+        const fb = img.getAttribute("data-fallback");
+        if (fb) img.src = fb;
+      });
+    });
+  }
+
+  function productPhotoSrc(product) {
+    if (product.photo) return product.photo;
+    const slug = product.slug || slugify(product.name);
+    return slug ? `images/products/${slug}.jpg` : "";
+  }
+
   // ─── Announcement bar ────────────────────────────────────────────────────────
 
   function renderAnnouncement() {
@@ -266,9 +308,11 @@
 
     const img = $("hero-image");
     if (img) {
-      const src = CONFIG.hero.image && CONFIG.hero.image.src;
-      img.src = src || placeholderSvg("Add your hero photo", 900, 1125);
+      const configured = CONFIG.hero.image && CONFIG.hero.image.src;
+      img.src = configured || "images/hero.jpg";
+      img.dataset.fallback = placeholderSvg("Add your hero photo", 900, 1125);
       img.alt = (CONFIG.hero.image && CONFIG.hero.image.alt) || `${CONFIG.business.name} — this week's drop.`;
+      wireImageFallbacks(img.parentElement);
     }
   }
 
@@ -357,15 +401,32 @@
 
     const photo = $("about-photo");
     const grid = $("about-grid");
+    const twoColCls = "grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center";
+    const oneColCls = "mx-auto grid max-w-3xl gap-10";
     if (photo) {
-      if (CONFIG.about.photo) {
-        photo.src = CONFIG.about.photo;
+      const explicit = CONFIG.about.photo;
+      const tryAuto = !explicit && CONFIG.about.photoAuto !== false;
+
+      if (explicit) {
+        photo.src = explicit;
+        photo.alt = CONFIG.business.name;
+        photo.dataset.fallback = placeholderSvg("About photo", 900, 1125);
+        photo.hidden = false;
+        if (grid) grid.className = twoColCls;
+        wireImageFallbacks(photo.parentElement);
+      } else if (tryAuto) {
+        photo.src = "images/about.jpg";
         photo.alt = CONFIG.business.name;
         photo.hidden = false;
-        if (grid) grid.className = "grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center";
+        if (grid) grid.className = twoColCls;
+        photo.addEventListener("error", function handleErr() {
+          photo.removeEventListener("error", handleErr);
+          photo.hidden = true;
+          if (grid) grid.className = oneColCls;
+        });
       } else {
         photo.hidden = true;
-        if (grid) grid.className = "mx-auto grid max-w-3xl gap-10";
+        if (grid) grid.className = oneColCls;
       }
     }
   }
@@ -422,6 +483,8 @@
           : renderProductCard(product)
       )
       .join("");
+
+    wireImageFallbacks(wrap);
   }
 
   function chipsHtml(product) {
@@ -460,12 +523,14 @@
   }
 
   function renderFeaturedCard(product) {
-    const photoSrc = product.photo || placeholderSvg(product.name, 1200, 900);
+    const photoSrc = productPhotoSrc(product) || placeholderSvg(product.name, 1200, 900);
+    const fallbackSvg = placeholderSvg(product.name, 1200, 900);
     return `<article class="group relative overflow-hidden rounded-[1.75rem] border border-edge bg-creamSoft shadow-soft lg:col-span-2 lg:row-span-2">
       <div class="relative h-full">
         <img
           class="h-full min-h-[420px] w-full object-cover lg:aspect-[5/4] lg:min-h-0"
           src="${escapeHtml(photoSrc)}"
+          data-fallback="${escapeHtml(fallbackSvg)}"
           alt="${escapeHtml(product.name)}."
           loading="lazy"
           decoding="async"
@@ -483,12 +548,14 @@
   }
 
   function renderProductCard(product) {
-    const photoSrc = product.photo || placeholderSvg(product.name, 900, 600);
+    const photoSrc = productPhotoSrc(product) || placeholderSvg(product.name, 900, 600);
+    const fallbackSvg = placeholderSvg(product.name, 900, 600);
     return `<article class="relative overflow-hidden rounded-[1.75rem] border border-edge bg-creamSoft shadow-sm">
       <div class="relative">
         <img
           class="aspect-[4/3] w-full object-cover"
           src="${escapeHtml(photoSrc)}"
+          data-fallback="${escapeHtml(fallbackSvg)}"
           alt="${escapeHtml(product.name)}."
           loading="lazy"
           decoding="async"
@@ -744,6 +811,101 @@
     return { label: "Next Drop", cls: "bg-mango text-onAccent" };
   }
 
+  // ─── ICS pickup-date export ───────────────────────────────────────────────────
+
+  function parsePickupWindow(pickupWindow) {
+    const m = String(pickupWindow || "").match(/(\d+)\s*(AM|PM)\s*-\s*(\d+)\s*(AM|PM)/i);
+    if (!m) return null;
+    let startHour = parseInt(m[1], 10);
+    let endHour = parseInt(m[3], 10);
+    if (m[2].toUpperCase() === "PM" && startHour !== 12) startHour += 12;
+    if (m[2].toUpperCase() === "AM" && startHour === 12) startHour = 0;
+    if (m[4].toUpperCase() === "PM" && endHour !== 12) endHour += 12;
+    if (m[4].toUpperCase() === "AM" && endHour === 12) endHour = 0;
+    return { startHour, endHour };
+  }
+
+  function icsEscape(str) {
+    return String(str || "")
+      .replace(/\\/g, "\\\\")
+      .replace(/\r?\n/g, "\\n")
+      .replace(/,/g, "\\,")
+      .replace(/;/g, "\\;");
+  }
+
+  function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function buildIcsContent(date) {
+    if (!date || !date.isoDate) return null;
+    const window = parsePickupWindow(date.pickupWindow);
+    if (!window) return null;
+
+    const [y, mo, d] = date.isoDate.split("-").map(Number);
+    if (!y || !mo || !d) return null;
+    const dt = (h) => `${y}${pad2(mo)}${pad2(d)}T${pad2(h)}0000`;
+    const dtStart = dt(window.startHour);
+    const dtEnd = dt(window.endHour);
+
+    const now = new Date();
+    const dtStamp =
+      `${now.getUTCFullYear()}${pad2(now.getUTCMonth() + 1)}${pad2(now.getUTCDate())}` +
+      `T${pad2(now.getUTCHours())}${pad2(now.getUTCMinutes())}${pad2(now.getUTCSeconds())}Z`;
+
+    const brand = CONFIG.business.name || "Pickup";
+    const summary = `${brand} pickup`;
+    const cutoff = date.preorderCutoffLabel ? `\n${date.preorderCutoffLabel}.` : "";
+    const handle = CONFIG.social.instagramHandle || CONFIG.preorder.instagramHandleLabel || "";
+    const description =
+      `Pickup window: ${date.pickupWindow}.${cutoff}` +
+      (handle ? `\nDM ${handle} to confirm.` : "");
+    const location = CONFIG.business.locationLabel || "";
+    const host = (CONFIG.business.siteUrl || "").replace(/^https?:\/\//, "").replace(/\/$/, "") || "sweetdropkitchen.local";
+    const uid = `${date.id || date.isoDate}@${host}`;
+
+    const lines = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      `PRODID:-//${icsEscape(brand)}//Pickup//EN`,
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `UID:${uid}`,
+      `DTSTAMP:${dtStamp}`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `SUMMARY:${icsEscape(summary)}`,
+      `DESCRIPTION:${icsEscape(description)}`,
+      location ? `LOCATION:${icsEscape(location)}` : "",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].filter(Boolean);
+
+    return lines.join("\r\n");
+  }
+
+  function icsDataUri(date) {
+    const ics = buildIcsContent(date);
+    if (!ics) return null;
+    return `data:text/calendar;charset=utf-8;base64,${utf8ToBase64(ics)}`;
+  }
+
+  function icsFilename(date) {
+    const brandSlug = slugify(CONFIG.business.shortName || CONFIG.business.name || "pickup");
+    return `${brandSlug || "pickup"}-${date.isoDate}.ics`;
+  }
+
+  const ICS_ICON_SVG =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" ` +
+    `stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" ` +
+    `class="inline-block h-3.5 w-3.5 align-[-2px]" aria-hidden="true">` +
+    `<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>` +
+    `<line x1="16" y1="2" x2="16" y2="6"></line>` +
+    `<line x1="8" y1="2" x2="8" y2="6"></line>` +
+    `<line x1="3" y1="10" x2="21" y2="10"></line>` +
+    `</svg>`;
+
   // ─── Date picker ──────────────────────────────────────────────────────────────
 
   function renderDateOptions() {
@@ -822,7 +984,30 @@
 
       label.appendChild(input);
       label.appendChild(content);
-      container.appendChild(label);
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "space-y-2";
+      wrapper.appendChild(label);
+
+      const icsAllowed = CONFIG.pickup.allowIcsExport !== false;
+      if (icsAllowed && date.isoDate) {
+        const uri = icsDataUri(date);
+        if (uri) {
+          const calLink = document.createElement("a");
+          calLink.href = uri;
+          calLink.setAttribute("download", icsFilename(date));
+          calLink.className =
+            "inline-flex items-center gap-1.5 pl-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted transition hover:text-mango focus:outline-none focus:text-mango";
+          calLink.innerHTML = `${ICS_ICON_SVG} <span>Add to calendar</span>`;
+          calLink.setAttribute(
+            "aria-label",
+            `Add ${date.weekday} ${date.dateLabel} pickup to your calendar`
+          );
+          wrapper.appendChild(calLink);
+        }
+      }
+
+      container.appendChild(wrapper);
     });
   }
 
@@ -883,16 +1068,10 @@
   }
 
   function getHourlyTimeOptions(pickupWindow) {
-    const m = pickupWindow.match(/(\d+)\s*(AM|PM)\s*-\s*(\d+)\s*(AM|PM)/i);
-    if (!m) return [];
-    let s = parseInt(m[1], 10);
-    let e = parseInt(m[3], 10);
-    if (m[2].toUpperCase() === "PM" && s !== 12) s += 12;
-    if (m[2].toUpperCase() === "AM" && s === 12) s = 0;
-    if (m[4].toUpperCase() === "PM" && e !== 12) e += 12;
-    if (m[4].toUpperCase() === "AM" && e === 12) e = 0;
+    const parsed = parsePickupWindow(pickupWindow);
+    if (!parsed) return [];
     const out = [];
-    for (let h = s; h < e; h++) out.push(formatHour(h));
+    for (let h = parsed.startHour; h < parsed.endHour; h++) out.push(formatHour(h));
     return out;
   }
 

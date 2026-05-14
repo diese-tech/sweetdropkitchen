@@ -3,39 +3,44 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sweet Drop Kitchen | Weekly Preorder Dessert Drops Template</title>
-  <meta
-    name="description"
-    content="Mobile-first preorder landing page template for local food sellers running weekly dessert drops and coordinating pickup by Instagram DM."
-  />
+  <title>Sweet Drop Kitchen</title>
+  <meta name="description" content="A mobile-first preorder page for local food sellers who announce weekly drops, take pickup orders, and coordinate through Instagram DMs." />
+
+  <script src="site.config.js"></script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cream: "#fff7e8",
-            creamSoft: "#fffaf1",
-            mango: "#ffc533",
-            mangoDeep: "#d89300",
-            blush: "#ffe6ef",
-            blushDeep: "#dd6f9b",
-            ube: "#5a247a",
-            ubeSoft: "#f1e4ff",
-            ink: "#24180d",
-            muted: "#6b5b48"
-          },
-          fontFamily: {
-            display: ["Playfair Display", "Georgia", "serif"],
-            sans: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"]
-          },
-          boxShadow: {
-            soft: "0 22px 60px rgba(90, 36, 122, 0.14)"
+    (function () {
+      const colors = window.SITE_CONFIG.theme.colors;
+      const fonts = window.SITE_CONFIG.theme.fonts;
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              cream: colors.bg,
+              creamSoft: colors.bgSoft,
+              mango: colors.accent,
+              mangoDeep: colors.accentDeep,
+              blush: colors.blush,
+              blushDeep: colors.blushDeep,
+              ube: colors.primary,
+              ubeSoft: colors.primarySoft,
+              ink: colors.ink,
+              muted: colors.muted
+            },
+            fontFamily: {
+              display: fonts.display,
+              sans: fonts.sans
+            },
+            boxShadow: {
+              soft: "0 22px 60px rgba(90, 36, 122, 0.14)"
+            }
           }
         }
-      }
-    };
+      };
+    })();
   </script>
+
   <style>
     :root {
       --grain-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
@@ -57,6 +62,7 @@
       z-index: -1;
     }
   </style>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -68,11 +74,9 @@
 <body class="bg-cream font-sans text-ink antialiased">
   <header class="sticky top-0 z-50 border-b border-ube/10 bg-cream/90 backdrop-blur-xl">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
-      <a href="#top" class="flex items-center gap-3" aria-label="Sweet Drop Kitchen home">
-        <span class="flex h-11 w-11 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ube shadow-sm">
-          SR
-        </span>
-        <span class="font-display text-xl font-bold text-ube sm:text-2xl">Sweet Drop Kitchen</span>
+      <a id="brand-link" href="#top" class="flex items-center gap-3" aria-label="Home">
+        <span id="brand-mark" class="flex h-11 w-11 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ube shadow-sm"></span>
+        <span id="brand-name" class="font-display text-xl font-bold text-ube sm:text-2xl"></span>
       </a>
 
       <nav class="hidden items-center gap-7 text-sm font-bold text-muted md:flex" aria-label="Main navigation">
@@ -92,35 +96,27 @@
   </header>
 
   <main id="top">
+    <p id="availability-banner" class="mx-auto max-w-6xl px-5 pt-6 text-center text-sm font-extrabold text-ube sm:px-6 lg:px-8" hidden></p>
+
     <section class="overflow-hidden">
       <div class="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-10 sm:px-6 sm:pt-14 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:pb-24 lg:pt-20">
         <div class="text-center lg:text-left">
-          <p class="mx-auto mb-5 inline-flex rounded-full bg-ubeSoft px-4 py-2 text-sm font-extrabold text-ube lg:mx-0">
-            Your City, FL
-          </p>
+          <p id="hero-eyebrow" class="mx-auto mb-5 inline-flex rounded-full bg-ubeSoft px-4 py-2 text-sm font-extrabold text-ube lg:mx-0"></p>
 
-          <h1 id="hero-headline" class="font-display leading-[0.95] tracking-tight text-center lg:text-left">
-            <span class="block text-6xl font-bold text-mango sm:text-7xl lg:text-[5.25rem]">Weekly</span>
-            <span class="mt-1 block text-5xl font-bold text-ube sm:text-6xl lg:text-[4.6rem]">Preorder Drops</span>
-            <span class="mt-3 block text-xl font-semibold uppercase tracking-[0.22em] text-ink/80 sm:text-2xl">Made Simple</span>
-          </h1>
-          <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted lg:mx-0">
-            A mobile-first preorder page for local food sellers who announce weekly drops, take pickup orders, and coordinate through Instagram DMs.
-          </p>
+          <h1 id="hero-headline" class="font-display leading-[0.95] tracking-tight text-center lg:text-left"></h1>
+          <p id="hero-subheadline" class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted lg:mx-0"></p>
 
           <div class="mt-9 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
             <a
+              id="hero-primary-cta"
               href="#preorder"
               class="rounded-full bg-mango px-8 py-4 text-center text-base font-extrabold text-ink shadow-soft transition hover:bg-mango/90 focus:outline-none focus:ring-4 focus:ring-mango/35"
-            >
-              Preorder Now
-            </a>
+            ></a>
             <a
+              id="hero-secondary-cta"
               href="#menu"
               class="rounded-full border-2 border-ube px-8 py-4 text-center text-base font-extrabold text-ube transition hover:bg-ube hover:text-white focus:outline-none focus:ring-4 focus:ring-ube/20"
-            >
-              View Menu
-            </a>
+            ></a>
           </div>
         </div>
 
@@ -130,10 +126,24 @@
 
           <div class="relative overflow-hidden rounded-[2rem] border border-white/70 bg-creamSoft p-4 shadow-soft">
             <img
+              id="hero-image"
               class="aspect-[4/5] w-full rounded-[1.5rem] object-cover"
-              alt="Placeholder for a close-up dessert drop product photo."
-              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='1125' viewBox='0 0 900 1125'%3E%3Crect width='900' height='1125' fill='%23fff1ce'/%3E%3Cellipse cx='445' cy='620' rx='300' ry='235' fill='%23ffffff'/%3E%3Cellipse cx='450' cy='625' rx='245' ry='180' fill='%23f8e6d4'/%3E%3Cpath d='M270 475c105-105 250-125 370-65-55 120-175 210-330 210-50 0-82-55-40-145z' fill='%23ffc533'/%3E%3Cpath d='M380 675c90-45 205-35 285 35-70 75-220 105-340 35 0-28 20-52 55-70z' fill='%235a247a'/%3E%3Cpath d='M282 725c75 75 240 110 365 35' fill='none' stroke='%23ffffff' stroke-width='28' stroke-linecap='round'/%3E%3Ccircle cx='250' cy='260' r='48' fill='%23ffc533' opacity='.55'/%3E%3Ccircle cx='690' cy='300' r='62' fill='%23f1e4ff'/%3E%3Ctext x='450' y='1000' text-anchor='middle' font-family='Arial, sans-serif' font-size='34' font-weight='700' fill='%235a247a'%3EFinal product photo placeholder%3C/text%3E%3C/svg%3E"
+              alt=""
             />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about-section" class="bg-white py-16 sm:py-20 lg:py-24" hidden>
+      <div class="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8">
+        <div class="grid items-center gap-8 sm:grid-cols-[0.9fr_1.1fr]">
+          <img id="about-photo" class="aspect-square w-full rounded-[1.75rem] object-cover shadow-soft" alt="" hidden />
+          <div>
+            <p id="about-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
+            <h2 id="about-heading" class="mt-3 font-display text-4xl font-bold text-ink"></h2>
+            <p id="about-body" class="mt-5 leading-7 text-muted"></p>
+            <p id="about-signed-by" class="mt-4 font-display text-lg font-bold text-ube"></p>
           </div>
         </div>
       </div>
@@ -142,11 +152,9 @@
     <section id="menu" class="bg-white py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-2xl text-center">
-          <p class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube">Featured Menu</p>
-          <h2 class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl">Mango Sticky Rice</h2>
-          <p class="mt-4 text-base leading-7 text-muted">
-            Three sample products for a reusable local dessert drop template.
-          </p>
+          <p id="menu-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
+          <h2 id="menu-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
+          <p id="menu-blurb" class="mt-4 text-base leading-7 text-muted"></p>
         </div>
 
         <div id="menu-cards" class="mt-12 grid gap-6 lg:grid-cols-2"></div>
@@ -156,16 +164,10 @@
     <section id="preorder" class="py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-3xl text-center">
-          <p class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube">Pickup & Preorder</p>
-          <h2 class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl">
-            Build your preorder message.
-          </h2>
-          <p class="mt-5 text-lg leading-8 text-muted">
-            Weekly preorder drops for local food sellers. Pickup dates are announced regularly.
-          </p>
-          <p class="mt-3 text-sm font-semibold text-muted">
-            Copy your preorder message and send it by Instagram DM. No checkout required.
-          </p>
+          <p id="preorder-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
+          <h2 id="preorder-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
+          <p id="preorder-blurb" class="mt-5 text-lg leading-8 text-muted"></p>
+          <p id="preorder-instructions" class="mt-3 text-sm font-semibold text-muted"></p>
         </div>
 
         <div class="mt-12 grid gap-6 lg:grid-cols-[1fr_0.92fr] lg:items-start">
@@ -201,10 +203,7 @@
                   name="size"
                   class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition focus:border-ube focus:ring-4 focus:ring-ube/15"
                   required
-                >
-                  <option value="Cup">Cup</option>
-                  <option value="Box">Box</option>
-                </select>
+                ></select>
               </div>
 
               <div>
@@ -228,12 +227,7 @@
                   name="paymentMethod"
                   class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition focus:border-ube focus:ring-4 focus:ring-ube/15"
                   required
-                >
-                  <option value="Cash App">Cash App</option>
-                  <option value="Venmo">Venmo</option>
-                  <option value="Apple Pay">Apple Pay</option>
-                  <option value="Cash">Cash</option>
-                </select>
+                ></select>
               </div>
             </div>
 
@@ -277,7 +271,7 @@
                 <h3 class="mt-2 font-display text-3xl font-bold">Instagram DM draft</h3>
               </div>
               <div class="rounded-2xl bg-white/10 px-4 py-3 text-sm font-extrabold text-mango">
-                Total <span id="order-total">$7</span>
+                Total <span id="order-total">$0</span>
               </div>
             </div>
 
@@ -300,7 +294,8 @@
                 Copy preorder message
               </button>
               <a
-                href="https://ig.me/m/sweetdropkitchen"
+                id="preorder-ig-dm-link"
+                href="#"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="rounded-full border-2 border-white px-6 py-4 text-center text-sm font-extrabold text-white transition hover:bg-white hover:text-ube focus:outline-none focus:ring-4 focus:ring-white/30"
@@ -309,9 +304,7 @@
               </a>
             </div>
 
-            <p class="mt-4 text-sm font-bold text-mango">
-              DM us on Instagram: @sweetdropkitchen
-            </p>
+            <p id="preorder-ig-handle-label" class="mt-4 text-sm font-bold text-mango"></p>
             <p class="mt-5 text-sm leading-6 text-white/75">
               Copy the message first, then paste it into Instagram. Instagram DMs cannot be prefilled from this page.
             </p>
@@ -323,35 +316,11 @@
     <section id="how-it-works" class="bg-white py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-2xl text-center">
-          <p class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube">How It Works</p>
-          <h2 class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl">Simple preorder pickup</h2>
+          <p id="how-it-works-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
+          <h2 id="how-it-works-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
         </div>
 
-        <div class="mt-12 grid gap-5 md:grid-cols-3">
-          <article class="rounded-[1.5rem] bg-creamSoft p-7 shadow-sm">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ink">1</div>
-            <h3 class="mt-6 font-display text-2xl font-bold">Submit preorder</h3>
-            <p class="mt-3 leading-7 text-muted">
-              Send your name, quantity, size, and preferred pickup time.
-            </p>
-          </article>
-
-          <article class="rounded-[1.5rem] bg-creamSoft p-7 shadow-sm">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ink">2</div>
-            <h3 class="mt-6 font-display text-2xl font-bold">Confirm payment/pickup time</h3>
-            <p class="mt-3 leading-7 text-muted">
-              Your order and pickup time are confirmed. Payment may be requested to secure the order.
-            </p>
-          </article>
-
-          <article class="rounded-[1.5rem] bg-creamSoft p-7 shadow-sm">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ink">3</div>
-            <h3 class="mt-6 font-display text-2xl font-bold">Pick up locally</h3>
-            <p class="mt-3 leading-7 text-muted">
-              Pick up your fresh-made order at your local drop location.
-            </p>
-          </article>
-        </div>
+        <div id="how-it-works-steps" class="mt-12 grid gap-5 md:grid-cols-3"></div>
       </div>
     </section>
 
@@ -360,21 +329,12 @@
         <div class="rounded-[1.75rem] bg-creamSoft p-6 shadow-soft sm:p-8 lg:p-10">
           <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div>
-              <p class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube">Payment</p>
-              <h2 id="payment-heading" class="mt-3 font-display text-4xl font-bold text-ink">
-                Accepted payment methods
-              </h2>
-              <p class="mt-5 leading-7 text-muted">
-                Payment may be required to secure larger orders or new customer orders.
-              </p>
+              <p id="payment-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
+              <h2 id="payment-heading" class="mt-3 font-display text-4xl font-bold text-ink"></h2>
+              <p id="payment-blurb" class="mt-5 leading-7 text-muted"></p>
             </div>
 
-            <ul class="grid gap-3 sm:grid-cols-2" aria-label="Accepted payment methods">
-              <li class="rounded-2xl border border-ube/10 bg-white px-5 py-4 font-extrabold text-ube">Cash App</li>
-              <li class="rounded-2xl border border-ube/10 bg-white px-5 py-4 font-extrabold text-ube">Venmo</li>
-              <li class="rounded-2xl border border-ube/10 bg-white px-5 py-4 font-extrabold text-ube">Apple Pay</li>
-              <li class="rounded-2xl border border-ube/10 bg-white px-5 py-4 font-extrabold text-ube">Cash</li>
-            </ul>
+            <ul id="payment-list" class="grid gap-3 sm:grid-cols-2" aria-label="Accepted payment methods"></ul>
           </div>
         </div>
       </div>
@@ -383,11 +343,13 @@
     <section id="faq" class="bg-white py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8">
         <div class="text-center">
-          <p class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube">FAQ</p>
-          <h2 class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl">Good to know</h2>
+          <p id="faq-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
+          <h2 id="faq-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
         </div>
 
         <div id="faq-list" class="mt-10 space-y-4"></div>
+
+        <p id="legal-notice" class="mt-10 rounded-2xl border border-ube/10 bg-creamSoft px-5 py-4 text-center text-xs leading-6 text-muted" hidden></p>
       </div>
     </section>
   </main>
@@ -395,10 +357,8 @@
   <footer class="bg-ube py-12 text-white">
     <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 md:grid-cols-[1.4fr_0.8fr_0.8fr] lg:px-8">
       <div>
-        <p class="font-display text-3xl font-bold text-mango">Sweet Drop Kitchen</p>
-        <p class="mt-4 max-w-md leading-7 text-white/75">
-          Mobile-first preorder template for local dessert drops and Instagram-first order coordination.
-        </p>
+        <p id="footer-brand" class="font-display text-3xl font-bold text-mango"></p>
+        <p id="footer-tagline" class="mt-4 max-w-md leading-7 text-white/75"></p>
       </div>
 
       <div>
@@ -415,8 +375,9 @@
         <ul class="mt-4 space-y-3 text-white/75">
           <li>
             <a
+              id="footer-instagram"
               class="transition hover:text-mango"
-              href="https://www.instagram.com/sweetdropkitchen/"
+              href="#"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -425,8 +386,9 @@
           </li>
           <li>
             <a
+              id="footer-tiktok"
               class="transition hover:text-mango"
-              href="https://www.tiktok.com/@sweetdropkitchen"
+              href="#"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -438,342 +400,10 @@
     </div>
 
     <div class="mx-auto mt-10 max-w-6xl border-t border-white/15 px-5 pt-6 text-sm text-white/55 sm:px-6 lg:px-8">
-      <p>Your City, FL</p>
+      <p id="footer-location"></p>
     </div>
   </footer>
 
-  <script>
-    const SITE_CONFIG = {
-      brandName: "Sweet Drop Kitchen",
-      location: "Your City, FL",
-      hero: {
-        badge: "Built for local preorder drops",
-        headline: ["Weekly", "Preorder Drops", "Made Simple"],
-        subheadline: "Copy your preorder message and send it by Instagram DM. No checkout required."
-      },
-      instagramUrl: "https://www.instagram.com/sweetdropkitchen/",
-      instagramDmUrl: "https://ig.me/m/sweetdropkitchen",
-      tiktokUrl: "https://www.tiktok.com/@sweetdropkitchen",
-      products: [
-        { name: "Mango Sticky Rice", description: "Classic mango sticky rice prepared for preorder pickup.", prices: { Cup: 7, Box: 12 } },
-        { name: "Ube Dessert Cup", description: "Creamy ube dessert layered and portioned for pickup.", prices: { Cup: 8, Box: 13 } },
-        { name: "Strawberry Matcha Cup", description: "Strawberry + matcha dessert cup made for weekly drops.", prices: { Cup: 9, Box: 14 } }
-      ],
-      paymentMethods: ["Cash App", "Venmo", "Apple Pay", "Cash"],
-      pickupAvailability: [
-        { id: "tuesday-6-10", weekday: "Tuesday", dateLabel: "6/10", pickupWindow: "12 PM - 6 PM", preorderCutoffLabel: "Preorder closes Monday at 8 PM", status: "open", timeOptions: [] },
-        { id: "wednesday-6-11", weekday: "Wednesday", dateLabel: "6/11", pickupWindow: "11 AM - 6 PM", preorderCutoffLabel: "Preorder closes Tuesday at 8 PM", status: "limited", timeOptions: [] },
-        { id: "sunday-6-15", weekday: "Sunday", dateLabel: "6/15", pickupWindow: "1 PM - 7 PM", preorderCutoffLabel: "Preorder closes Saturday at 8 PM", status: "open", timeOptions: [] }
-      ],
-      faq: [
-        { q: "Is this pickup only?", a: "Yes. This template is designed for local pickup preorder drops." },
-        { q: "Do customers need to preorder?", a: "Yes. Orders are coordinated through preorder messages." },
-        { q: "How are dates announced?", a: "Pickup dates are announced regularly on social channels." },
-        { q: "How do customers place an order?", a: "They copy the preorder message and send it by Instagram DM." }
-      ],
-      footerCopy: "Mobile-first preorder template for local dessert drops and Instagram-first order coordination."
-    };
-
-    const preorderState = {
-      selectedDateId: "",
-      selectedTime: ""
-    };
-
-    const preorderForm = document.getElementById("preorder-form");
-    const nameInput = document.getElementById("customer-name");
-    const productSelect = document.getElementById("product");
-    const sizeSelect = document.getElementById("size");
-    const quantityInput = document.getElementById("quantity");
-    const paymentSelect = document.getElementById("payment-method");
-    const dateOptions = document.getElementById("pickup-date-options");
-    const timeOptions = document.getElementById("pickup-time-options");
-    const selectedDateNote = document.getElementById("selected-date-note");
-    const selectedTimeNote = document.getElementById("selected-time-note");
-    const messagePreview = document.getElementById("message-preview");
-    const orderTotal = document.getElementById("order-total");
-    const preorderStatus = document.getElementById("preorder-status");
-    const copyMessageButton = document.getElementById("copy-message");
-
-    const statusText = {
-      open: "Open",
-      limited: "Few slots left",
-      sold_out: "Sold out",
-      coming_soon: "Coming soon",
-      closed: "Preorders closed"
-    };
-
-
-    function initializeStaticContent() {
-      document.querySelector('meta[name="description"]').setAttribute('content', "Mobile-first preorder landing page template for local food sellers running weekly dessert drops and coordinating pickup by Instagram DM.");
-      document.title = `${SITE_CONFIG.brandName} | Weekly Preorder Dessert Drops Template`;
-      document.querySelector('header a[aria-label]').setAttribute('aria-label', `${SITE_CONFIG.brandName} home`);
-      document.querySelector('header .font-display').textContent = SITE_CONFIG.brandName;
-      document.getElementById('hero-badge').textContent = SITE_CONFIG.hero.badge;
-      const h = SITE_CONFIG.hero.headline;
-      document.getElementById('hero-headline').innerHTML = `<span class="block text-6xl font-bold text-mango sm:text-7xl lg:text-[5.25rem]">${h[0]}</span><span class="mt-1 block text-5xl font-bold text-ube sm:text-6xl lg:text-[4.6rem]">${h[1]}</span><span class="mt-3 block text-xl font-semibold uppercase tracking-[0.22em] text-ink/80 sm:text-2xl">${h[2]}</span>`;
-      document.querySelector('#top p.mx-auto.mt-6').textContent = SITE_CONFIG.hero.subheadline;
-      document.querySelector('footer .font-display').textContent = SITE_CONFIG.brandName;
-      document.querySelector('footer .max-w-md').textContent = SITE_CONFIG.footerCopy;
-      document.querySelector('footer .border-t p').textContent = SITE_CONFIG.location;
-      document.querySelector('a[href*="instagram.com"]').href = SITE_CONFIG.instagramUrl;
-      document.querySelector('a[href*="tiktok.com"]').href = SITE_CONFIG.tiktokUrl;
-      document.querySelector('a[href*="ig.me/m/"]').href = SITE_CONFIG.instagramDmUrl;
-    }
-
-    function renderMenuCards() {
-      const wrap = document.getElementById('menu-cards');
-      wrap.innerHTML = SITE_CONFIG.products.map((product) => {
-        const cup = product.prices.Cup;
-        const box = product.prices.Box;
-        return `<article class="overflow-hidden rounded-[1.75rem] border border-ube/10 bg-creamSoft shadow-sm"><img class="h-72 w-full object-cover" alt="Sample dessert product photo placeholder." src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='520' viewBox='0 0 900 520'%3E%3Crect width='900' height='520' fill='%23fff7e8'/%3E%3Ccircle cx='455' cy='260' r='180' fill='%23ffffff'/%3E%3Cpath d='M300 215c86-88 210-105 305-55-48 94-146 160-270 158-43 0-70-43-35-103z' fill='%23ffc533'/%3E%3Cellipse cx='455' cy='322' rx='180' ry='72' fill='%23f5e2cd'/%3E%3Cpath d='M335 340c75 34 165 35 245 0' stroke='%23ffffff' stroke-width='22' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" /><div class="p-6 sm:p-8"><div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"><h3 class="font-display text-3xl font-bold text-ink">${product.name}</h3><div class="rounded-2xl bg-mango/25 px-4 py-3 text-sm font-extrabold text-ink">Cup $${cup} &middot; Box $${box}</div></div><p class="mt-4 leading-7 text-muted">${product.description}</p><a href="#preorder" class="mt-7 inline-flex w-full justify-center rounded-full bg-ube px-6 py-4 text-sm font-extrabold text-white transition hover:bg-ube/90 focus:outline-none focus:ring-4 focus:ring-ube/20">Request ${product.name}</a></div></article>`;
-      }).join('');
-    }
-
-    function renderProductAndPaymentOptions() {
-      productSelect.innerHTML = SITE_CONFIG.products.map((p, i) => `<option value="${p.name}" ${i===0?'selected':''}>${p.name}</option>`).join('');
-      const paymentSelectEl = document.getElementById('payment-method');
-      paymentSelectEl.innerHTML = SITE_CONFIG.paymentMethods.map((p) => `<option value="${p}">${p}</option>`).join('');
-      const paymentList = document.querySelector('ul[aria-label="Accepted payment methods"]');
-      paymentList.innerHTML = SITE_CONFIG.paymentMethods.map((p) => `<li class="rounded-2xl border border-ube/10 bg-white px-5 py-4 font-extrabold text-ube">${p}</li>`).join('');
-    }
-    function isDateSelectable(date) {
-      return date.status === "open" || date.status === "limited";
-    }
-
-    function getSelectedDate() {
-      return SITE_CONFIG.pickupAvailability.find((date) => date.id === preorderState.selectedDateId);
-    }
-
-    function getFormValues() {
-      const quantity = Math.max(1, Number.parseInt(quantityInput.value, 10) || 1);
-      const product = productSelect.value;
-      const size = sizeSelect.value;
-      return {
-        name: nameInput.value.trim(),
-        product,
-        size,
-        quantity,
-        total: getUnitPrice(product, size) * quantity,
-        paymentMethod: paymentSelect.value,
-        pickupDate: getSelectedDate() ? `${getSelectedDate().weekday} ${getSelectedDate().dateLabel}` : "",
-        pickupTime: preorderState.selectedTime
-      };
-    }
-
-    function getUnitPrice(product, size) {
-      const match = SITE_CONFIG.products.find((item) => item.name === product);
-      return match ? match.prices[size] : 0;
-    }
-
-    function buildMessage(values) {
-      return [
-        "Hi! I\u2019d like to place a preorder drop request.",
-        "",
-        `Name: ${values.name || "[name]"}`,
-        `Item: ${values.quantity}x ${values.size} ${values.product}`,
-        `Estimated total: $${values.total || "[total]"}`,
-        `Pickup date: ${values.pickupDate || "[date]"}`,
-        `Preferred pickup time: ${values.pickupTime || "[time]"}`,
-        `Payment method: ${values.paymentMethod}`,
-        "",
-        "Please confirm availability when you can. Thank you!"
-      ].join("\n");
-    }
-
-    function updatePreview() {
-      const values = getFormValues();
-      orderTotal.textContent = `$${values.total}`;
-      messagePreview.textContent = buildMessage(values);
-    }
-
-    function formatHour(hour) {
-      const suffix = hour >= 12 ? "PM" : "AM";
-      const normalizedHour = hour % 12 || 12;
-      return `${normalizedHour} ${suffix}`;
-    }
-
-    function getHourlyTimeOptions(pickupWindow) {
-      const match = pickupWindow.match(/(\d+)\s*(AM|PM)\s*-\s*(\d+)\s*(AM|PM)/i);
-      if (!match) return [];
-
-      let startHour = Number.parseInt(match[1], 10);
-      let endHour = Number.parseInt(match[3], 10);
-      const startPeriod = match[2].toUpperCase();
-      const endPeriod = match[4].toUpperCase();
-
-      if (startPeriod === "PM" && startHour !== 12) startHour += 12;
-      if (startPeriod === "AM" && startHour === 12) startHour = 0;
-      if (endPeriod === "PM" && endHour !== 12) endHour += 12;
-      if (endPeriod === "AM" && endHour === 12) endHour = 0;
-
-      const options = [];
-      for (let hour = startHour; hour < endHour; hour += 1) {
-        options.push(formatHour(hour));
-      }
-
-      return options;
-    }
-
-    function getTimeOptionsForDate(date) {
-      return date.timeOptions.length > 0 ? date.timeOptions : getHourlyTimeOptions(date.pickupWindow);
-    }
-
-    function renderDateOptions() {
-      dateOptions.innerHTML = "";
-
-      SITE_CONFIG.pickupAvailability.forEach((date) => {
-        const selectable = isDateSelectable(date);
-        const isSelected = preorderState.selectedDateId === date.id;
-        const button = document.createElement("button");
-        button.type = "button";
-        button.role = "radio";
-        button.setAttribute("aria-checked", String(isSelected));
-        button.disabled = !selectable;
-        button.dataset.dateId = date.id;
-        button.className = [
-          "rounded-[1.5rem] border p-4 text-left transition focus:outline-none focus:ring-4 focus:ring-ube/15 sm:p-5",
-          isSelected ? "border-ube bg-ube text-white shadow-soft" : "border-blushDeep/20 bg-blush text-ink hover:border-ube/35",
-          selectable ? "cursor-pointer" : "cursor-not-allowed opacity-55 grayscale"
-        ].join(" ");
-
-        const statusClass = isSelected ? "bg-white/15 text-mango" : "bg-white/80 text-ube";
-        const detailClass = isSelected ? "text-white/80" : "text-muted";
-        button.innerHTML = `
-          <span class="flex items-start justify-between gap-4">
-            <span class="flex items-start gap-3">
-              <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${isSelected ? "bg-white/15 text-mango" : "bg-white text-ube"} text-xs font-black uppercase tracking-wider">Cal</span>
-              <span>
-                <span class="block font-display text-3xl font-bold leading-none">${date.weekday}</span>
-                <span class="mt-1 block text-lg font-extrabold">${date.dateLabel}</span>
-              </span>
-            </span>
-            <span class="rounded-full px-3 py-1 text-xs font-extrabold ${statusClass}">${statusText[date.status]}</span>
-          </span>
-          <span class="mt-4 grid gap-2 sm:grid-cols-2">
-            <span class="rounded-2xl ${isSelected ? "bg-white/10" : "bg-white/70"} px-4 py-3">
-              <span class="block text-xs font-extrabold uppercase tracking-[0.14em] ${detailClass}">Pickup window</span>
-              <span class="mt-1 block text-sm font-extrabold">${date.pickupWindow}</span>
-            </span>
-            <span class="rounded-2xl ${isSelected ? "bg-white/10" : "bg-white/70"} px-4 py-3">
-              <span class="block text-xs font-extrabold uppercase tracking-[0.14em] ${detailClass}">Preorder cutoff</span>
-              <span class="mt-1 block text-sm font-extrabold">${date.preorderCutoffLabel}</span>
-            </span>
-          </span>
-        `;
-
-        if (selectable) {
-          button.addEventListener("click", () => {
-            preorderState.selectedDateId = date.id;
-            preorderState.selectedTime = "";
-            preorderStatus.textContent = "";
-            selectedDateNote.textContent = `${date.weekday} ${date.dateLabel}`;
-            selectedTimeNote.textContent = "No time selected";
-            renderDateOptions();
-            renderTimeOptions();
-            updatePreview();
-          });
-        }
-
-        dateOptions.appendChild(button);
-      });
-    }
-
-    function renderTimeOptions() {
-      timeOptions.innerHTML = "";
-      const selectedDate = getSelectedDate();
-
-      if (!selectedDate) {
-        const prompt = document.createElement("p");
-        prompt.className = "rounded-2xl border border-dashed border-ube/20 bg-white/70 p-4 text-sm font-semibold text-muted sm:col-span-2";
-        prompt.textContent = "Select an available pickup date to view preferred pickup times.";
-        timeOptions.appendChild(prompt);
-        return;
-      }
-
-      getTimeOptionsForDate(selectedDate).forEach((time) => {
-        const isSelected = preorderState.selectedTime === time;
-        const button = document.createElement("button");
-        button.type = "button";
-        button.role = "radio";
-        button.setAttribute("aria-checked", String(isSelected));
-        button.className = [
-          "rounded-2xl border p-4 text-left transition focus:outline-none focus:ring-4 focus:ring-ube/15",
-          isSelected ? "border-ube bg-ube text-white shadow-soft" : "border-ube/10 bg-white text-ink hover:border-ube/35",
-          "cursor-pointer"
-        ].join(" ");
-        button.innerHTML = `
-          <span class="block font-extrabold">${time}</span>
-          <span class="mt-1 block text-sm ${isSelected ? "text-white/80" : "text-muted"}">
-            Preferred pickup time
-          </span>
-        `;
-
-        button.addEventListener("click", () => {
-          preorderState.selectedTime = time;
-          preorderStatus.textContent = "";
-          selectedTimeNote.textContent = time;
-          renderTimeOptions();
-          updatePreview();
-        });
-
-        timeOptions.appendChild(button);
-      });
-    }
-
-    function validatePreorder() {
-      const values = getFormValues();
-      const missingFields = [];
-
-      if (!values.name) missingFields.push("your name");
-      if (!values.pickupDate) missingFields.push("a pickup date");
-      if (!values.pickupTime) missingFields.push("a pickup time");
-
-      if (missingFields.length > 0) {
-        preorderStatus.textContent = `Almost there. Please add ${missingFields.join(", ")} before copying.`;
-        return null;
-      }
-
-      return values;
-    }
-
-    async function copyPreorderMessage() {
-      const values = validatePreorder();
-      if (!values) return;
-
-      const message = buildMessage(values);
-
-      try {
-        await navigator.clipboard.writeText(message);
-        preorderStatus.textContent = "Preorder message copied. Open Instagram DM and paste it there.";
-      } catch (error) {
-        preorderStatus.textContent = "Copy did not work in this browser. You can still select and copy the preview text.";
-      }
-    }
-
-    preorderForm.addEventListener("input", () => {
-      preorderStatus.textContent = "";
-      updatePreview();
-    });
-
-    preorderForm.addEventListener("change", () => {
-      preorderStatus.textContent = "";
-      updatePreview();
-    });
-
-    copyMessageButton.addEventListener("click", copyPreorderMessage);
-
-    function renderFaq() {
-      const faq = document.getElementById('faq-list');
-      faq.innerHTML = SITE_CONFIG.faq.map((item) => `<details class="group rounded-2xl border border-ube/10 bg-creamSoft p-6"><summary class="cursor-pointer list-none font-display text-xl font-bold text-ink">${item.q}</summary><p class="mt-4 leading-7 text-muted">${item.a}</p></details>`).join('');
-    }
-
-    initializeStaticContent();
-    renderMenuCards();
-    renderProductAndPaymentOptions();
-    renderFaq();
-    renderDateOptions();
-    renderTimeOptions();
-    updatePreview();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

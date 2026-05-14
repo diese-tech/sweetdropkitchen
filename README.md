@@ -239,19 +239,20 @@ menu: {
 
 ### 8. Pickup dates
 
-Add an entry for each upcoming drop. `isoDate` drives the countdown and the "This Week" badge.
+Add an entry for each upcoming drop. `isoDate` drives the countdown, the "This Week" badge, and the "Add to calendar" download.
 
 ```js
 pickup: {
   availabilityMode: "open",    // "open" | "paused" | "coming_soon"
   pausedMessage:    "",
+  allowIcsExport:   true,      // optional; default true. Set false to hide "Add to calendar" links
   dates: [
     {
       id:                  "saturday-5-17",
-      isoDate:             "2026-05-17",                          // ISO date — required for countdown
+      isoDate:             "2026-05-17",                          // ISO date — required for countdown + .ics
       weekday:             "Saturday",
       dateLabel:           "5/17",
-      pickupWindow:        "9 AM - 12 PM",
+      pickupWindow:        "9 AM - 12 PM",                         // start/end hour drive .ics DTSTART/DTEND
       preorderCutoffLabel: "Reservations close Thursday at 9 PM",
       status:              "open",                                // open | limited | sold_out | closed | coming_soon
       timeOptions:         []                                     // leave [] to auto-generate hourly options
@@ -259,6 +260,12 @@ pickup: {
   ]
 }
 ```
+
+**Add to calendar (.ics export).** Each date with an `isoDate` shows a small "Add to calendar" link below the card. Clicking it downloads an `.ics` file that drops a calendar event with title `"<business> pickup"`, the parsed pickup window as start/end, your `business.locationLabel` as the location, and a description with the cutoff + Instagram handle. The file works in Apple Calendar, Google Calendar, Outlook, and any other ICS-compatible app.
+
+Times are written as **floating** (no timezone). Calendar apps interpret them in the customer's local timezone — fine for local pickup, where vendor and customer share a timezone.
+
+Set `allowIcsExport: false` to hide the links globally.
 
 ### 9. Stats strip (optional)
 
@@ -374,15 +381,31 @@ footer: {
 
 ## Product photos
 
-Drop files into:
+The template auto-resolves photos from a convention. **Drop files into these paths and the page picks them up — no config edit needed:**
 
 ```
 images/hero.jpg                  — hero (recommended portrait, ~900×1125)
-images/about.jpg                 — about section square
-images/products/<slug>.jpg       — one per product (recommended ~900×600)
+images/about.jpg                 — about section (recommended portrait, ~900×1125)
+images/products/<slug>.jpg       — one per product, named after the product's slug (recommended ~900×600)
 ```
 
-Reference them as `photo: "images/products/your-slug.jpg"` in the config. If `photo` is left blank (`""`), the template renders a theme-aware SVG placeholder using your accent color.
+Each product's `slug` field is the lookup key. So `slug: "mango-sticky-rice"` → `images/products/mango-sticky-rice.jpg`.
+
+If a file isn't present at the convention path, the template falls back to a theme-aware SVG placeholder (uses your accent color). The browser logs a single 404 per missing image — harmless, just a missed network request.
+
+**Overriding the convention.** Set an explicit path in config to point at a different file:
+
+```js
+hero:  { image: { src: "images/this-week.jpg", alt: "This week's lineup." } },
+about: { photo: "images/baking-day.jpg" },
+menu: {
+  products: [
+    { slug: "country-loaf", photo: "images/country-loaf-v2.jpg", ... }
+  ]
+}
+```
+
+**Disabling auto-resolution for the about photo only** (e.g. you don't want an about photo at all): set `about: { photoAuto: false }`. The section will render as a centered single-column block.
 
 ---
 

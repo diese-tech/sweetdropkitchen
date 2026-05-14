@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#fff7e8" />
+  <meta name="theme-color" content="#0b0907" />
 
   <title>Sweet Drop Kitchen</title>
-  <meta name="description" content="Weekly preorder drops from a small home kitchen. Order by Instagram DM, pick up local. No checkout, no shipping." />
+  <meta name="description" content="A small home kitchen running weekly preorder drops. Six desserts. Seven days. Then gone." />
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Sweet Drop Kitchen" />
@@ -17,7 +17,7 @@
   <meta name="twitter:title" content="Sweet Drop Kitchen" />
   <meta name="twitter:description" content="Weekly preorder drops from a small home kitchen. Order by Instagram DM, pick up local." />
 
-  <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ffc533'/%3E%3Ctext x='50' y='66' text-anchor='middle' font-family='system-ui,-apple-system,Segoe UI,sans-serif' font-size='46' font-weight='800' fill='%235a247a'%3ESD%3C/text%3E%3C/svg%3E" />
+  <link id="favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23f5a623'/%3E%3Ctext x='50' y='66' text-anchor='middle' font-family='system-ui,-apple-system,Segoe UI,sans-serif' font-size='46' font-weight='800' fill='%230b0907'%3ESD%3C/text%3E%3C/svg%3E" />
 
   <script src="site.config.js"></script>
 
@@ -32,6 +32,7 @@
             colors: {
               cream: colors.bg,
               creamSoft: colors.bgSoft,
+              surface: colors.surface || colors.bgSoft,
               mango: colors.accent,
               mangoDeep: colors.accentDeep,
               blush: colors.blush,
@@ -39,14 +40,17 @@
               ube: colors.primary,
               ubeSoft: colors.primarySoft,
               ink: colors.ink,
-              muted: colors.muted
+              muted: colors.muted,
+              mutedSoft: colors.mutedSoft || colors.muted,
+              edge: colors.edge || colors.muted,
+              onAccent: colors.onAccent || colors.ink
             },
             fontFamily: {
               display: fonts.display,
               sans: fonts.sans
             },
             boxShadow: {
-              soft: "0 22px 60px rgba(90, 36, 122, 0.14)"
+              soft: "0 22px 60px rgba(0, 0, 0, 0.35)"
             }
           }
         }
@@ -59,24 +63,8 @@
       --grain-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
     }
 
-    .bg-cream, .bg-creamSoft {
-      position: relative;
-      isolation: isolate;
-    }
-
-    .bg-cream::before, .bg-creamSoft::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image: var(--grain-svg);
-      background-size: 140px 140px;
-      opacity: 0.045;
-      pointer-events: none;
-      z-index: -1;
-    }
-
     body {
-      padding-bottom: calc(env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     @media (max-width: 767.98px) {
@@ -88,82 +76,150 @@
     .sticky-bar-bottom {
       padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
     }
+
+    .display-headline {
+      font-family: var(--font-display, "Anton"), "Impact", "Arial Black", sans-serif;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+    }
+
+    .display-headline.serif {
+      letter-spacing: -0.02em;
+    }
+
+    .eyebrow {
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .marquee {
+      overflow: hidden;
+      mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%);
+    }
+    .marquee-track {
+      display: inline-flex;
+      gap: 1rem;
+      animation: marquee 50s linear infinite;
+    }
+    .marquee:hover .marquee-track {
+      animation-play-state: paused;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .pickup-radio:focus-visible + .pickup-radio-content {
+      outline: 2px solid #f5a623;
+      outline-offset: 2px;
+    }
   </style>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet"
   />
 </head>
 
 <body class="bg-cream font-sans text-ink antialiased">
-  <header class="sticky top-0 z-50 border-b border-ube/10 bg-cream/90 backdrop-blur-xl">
+
+  <a id="announcement-bar" href="#about" class="block bg-mango px-4 py-2 text-center text-onAccent transition hover:bg-mangoDeep" hidden>
+    <span id="announcement-text" class="eyebrow"></span>
+  </a>
+
+  <header class="sticky top-0 z-50 border-b border-edge bg-cream/95 backdrop-blur-xl">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
       <a id="brand-link" href="#top" class="flex items-center gap-3" aria-label="Home">
-        <span id="brand-mark" class="flex h-11 w-11 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ube shadow-sm"></span>
-        <span id="brand-name" class="font-display text-xl font-bold text-ube sm:text-2xl"></span>
+        <span id="brand-mark" class="flex h-11 w-11 items-center justify-center rounded-full bg-mango text-base font-extrabold text-onAccent shadow-sm"></span>
+        <span id="brand-name" class="font-display text-xl uppercase tracking-tight text-ink sm:text-2xl"></span>
       </a>
 
-      <nav class="hidden items-center gap-7 text-sm font-bold text-muted md:flex" aria-label="Main navigation">
-        <a class="transition hover:text-ube" href="#menu">Menu</a>
-        <a class="transition hover:text-ube" href="#how-it-works">How It Works</a>
-        <a class="transition hover:text-ube" href="#preorder">Preorder</a>
-        <a class="transition hover:text-ube" href="#faq">FAQ</a>
+      <nav class="hidden items-center gap-7 text-xs font-extrabold uppercase tracking-[0.18em] text-muted md:flex" aria-label="Main navigation">
+        <a class="transition hover:text-ink" href="#menu">Menu</a>
+        <a class="transition hover:text-ink" href="#how-it-works">How It Works</a>
+        <a class="transition hover:text-ink" href="#preorder">Preorder</a>
+        <a class="transition hover:text-ink" href="#faq">FAQ</a>
       </nav>
 
       <a
         href="#preorder"
-        class="rounded-full bg-ube px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-ube/90 focus:outline-none focus:ring-4 focus:ring-ube/20"
+        class="rounded-full bg-mango px-5 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-onAccent shadow-sm transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/30"
       >
-        Preorder
+        Order Now
       </a>
     </div>
   </header>
 
   <noscript>
     <div class="mx-auto max-w-3xl px-5 py-6 sm:px-6 lg:px-8">
-      <div class="rounded-2xl border border-ube/20 bg-creamSoft p-5 text-sm leading-6 text-ink">
-        <p class="font-display text-lg font-bold text-ube">JavaScript is off in your browser.</p>
-        <p class="mt-2">Most of this page is interactive (menu, pickup dates, preorder builder). To place an order without JavaScript, just send a DM with what you'd like and a preferred pickup day.</p>
+      <div class="rounded-2xl border border-edge bg-creamSoft p-5 text-sm leading-6 text-ink">
+        <p class="font-display text-lg text-mango">JavaScript is off in your browser.</p>
+        <p class="mt-2">Most of this page is interactive. To place an order without JavaScript, send a DM with what you'd like and a preferred pickup day.</p>
         <p class="mt-3">
-          <a class="font-extrabold text-ube underline" href="https://www.instagram.com/sweetdropkitchen/" rel="noopener noreferrer">DM on Instagram</a>
+          <a class="font-extrabold text-mango underline" href="https://www.instagram.com/sweetdropkitchen/" rel="noopener noreferrer">DM on Instagram</a>
         </p>
       </div>
     </div>
   </noscript>
 
   <main id="top">
-    <p id="availability-banner" class="mx-auto max-w-6xl px-5 pt-6 text-center text-sm font-extrabold text-ube sm:px-6 lg:px-8" hidden></p>
+    <p id="availability-banner" class="mx-auto max-w-6xl px-5 pt-6 text-center text-xs font-extrabold uppercase tracking-[0.18em] text-mango sm:px-6 lg:px-8" hidden></p>
 
     <section class="overflow-hidden">
       <div class="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-10 sm:px-6 sm:pt-14 lg:grid-cols-[1.02fr_0.98fr] lg:px-8 lg:pb-24 lg:pt-20">
         <div class="text-center lg:text-left">
-          <p id="hero-eyebrow" class="mx-auto mb-5 inline-flex rounded-full bg-ubeSoft px-4 py-2 text-sm font-extrabold text-ube lg:mx-0"></p>
+          <p id="hero-eyebrow" class="eyebrow text-mango"></p>
 
-          <h1 id="hero-headline" class="font-display leading-[0.95] tracking-tight text-center lg:text-left"></h1>
-          <p id="hero-subheadline" class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted lg:mx-0"></p>
+          <h1 id="hero-headline" class="display-headline mt-5 text-center lg:text-left"></h1>
 
-          <div class="mt-9 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+          <p id="hero-subheadline" class="mx-auto mt-6 max-w-2xl text-lg leading-7 text-muted lg:mx-0"></p>
+
+          <div id="hero-countdown" class="mx-auto mt-9 max-w-md lg:mx-0" hidden>
+            <p id="countdown-label" class="eyebrow text-muted text-center lg:text-left"></p>
+            <div class="mt-3 grid grid-cols-4 gap-2 sm:gap-3" aria-live="polite">
+              <div class="rounded-2xl border border-edge bg-creamSoft px-2 py-4 text-center">
+                <span class="block font-display text-4xl text-ink sm:text-5xl" id="countdown-days">00</span>
+                <span class="mt-1 block text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Days</span>
+              </div>
+              <div class="rounded-2xl border border-edge bg-creamSoft px-2 py-4 text-center">
+                <span class="block font-display text-4xl text-ink sm:text-5xl" id="countdown-hrs">00</span>
+                <span class="mt-1 block text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Hrs</span>
+              </div>
+              <div class="rounded-2xl border border-edge bg-creamSoft px-2 py-4 text-center">
+                <span class="block font-display text-4xl text-ink sm:text-5xl" id="countdown-min">00</span>
+                <span class="mt-1 block text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Min</span>
+              </div>
+              <div class="rounded-2xl border border-edge bg-creamSoft px-2 py-4 text-center">
+                <span class="block font-display text-4xl text-ink sm:text-5xl" id="countdown-sec">00</span>
+                <span class="mt-1 block text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Sec</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start">
             <a
               id="hero-primary-cta"
               href="#preorder"
-              class="rounded-full bg-mango px-8 py-4 text-center text-base font-extrabold text-ink shadow-soft transition hover:bg-mango/90 focus:outline-none focus:ring-4 focus:ring-mango/35"
+              class="rounded-full bg-mango px-8 py-4 text-center text-sm font-extrabold uppercase tracking-[0.18em] text-onAccent shadow-soft transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/35"
             ></a>
             <a
               id="hero-secondary-cta"
               href="#menu"
-              class="rounded-full border-2 border-ube px-8 py-4 text-center text-base font-extrabold text-ube transition hover:bg-ube hover:text-white focus:outline-none focus:ring-4 focus:ring-ube/20"
+              class="rounded-full border-2 border-ink px-8 py-4 text-center text-sm font-extrabold uppercase tracking-[0.18em] text-ink transition hover:bg-ink hover:text-cream focus:outline-none focus:ring-4 focus:ring-ink/15"
             ></a>
           </div>
         </div>
 
         <div class="relative">
-          <div class="absolute -left-5 top-8 h-28 w-28 rounded-full bg-mango/40 blur-3xl"></div>
-          <div class="absolute -bottom-6 right-4 h-32 w-32 rounded-full bg-ube/20 blur-3xl"></div>
+          <div class="absolute -left-5 top-8 h-28 w-28 rounded-full bg-mango/30 blur-3xl"></div>
+          <div class="absolute -bottom-6 right-4 h-32 w-32 rounded-full bg-mango/20 blur-3xl"></div>
 
-          <div class="relative overflow-hidden rounded-[2rem] border border-white/70 bg-creamSoft p-4 shadow-soft">
+          <div class="relative overflow-hidden rounded-[2rem] border border-edge bg-creamSoft p-2 shadow-soft sm:p-4">
             <img
               id="hero-image"
               class="aspect-[4/5] w-full rounded-[1.5rem] object-cover"
@@ -176,90 +232,94 @@
       </div>
     </section>
 
-    <section id="about-section" class="bg-white py-16 sm:py-20 lg:py-24" hidden>
-      <div class="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8">
-        <div class="grid items-center gap-8 sm:grid-cols-[0.9fr_1.1fr]">
-          <img id="about-photo" class="aspect-square w-full rounded-[1.75rem] object-cover shadow-soft" alt="" loading="lazy" decoding="async" hidden />
+    <section id="about-section" class="border-t border-edge py-16 sm:py-20 lg:py-24" hidden>
+      <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+        <div id="about-grid" class="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
           <div>
-            <p id="about-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
-            <h2 id="about-heading" class="mt-3 font-display text-4xl font-bold text-ink"></h2>
-            <p id="about-body" class="mt-5 leading-7 text-muted"></p>
-            <p id="about-signed-by" class="mt-4 font-display text-lg font-bold text-ube"></p>
+            <p id="about-eyebrow" class="eyebrow text-mango"></p>
+            <h2 id="about-heading" class="display-headline mt-4"></h2>
+            <p id="about-body" class="mt-6 max-w-xl text-base leading-7 text-muted"></p>
+            <p id="about-signed-by" class="mt-4 font-display text-lg uppercase tracking-tight text-mango"></p>
+
+            <ul id="about-bullets" class="mt-8 space-y-5 border-l-2 border-mango pl-6" hidden></ul>
           </div>
+
+          <img id="about-photo" class="aspect-[4/5] w-full rounded-[1.75rem] object-cover shadow-soft" alt="" loading="lazy" decoding="async" hidden />
         </div>
       </div>
     </section>
 
-    <section id="menu" class="bg-white py-16 sm:py-20 lg:py-24">
+    <section id="menu" class="border-t border-edge py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl text-center">
-          <p id="menu-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
-          <h2 id="menu-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
-          <p id="menu-blurb" class="mt-4 text-base leading-7 text-muted"></p>
+        <div class="mx-auto max-w-3xl text-center">
+          <p id="menu-eyebrow" class="eyebrow text-mango"></p>
+          <h2 id="menu-heading" class="display-headline mt-4"></h2>
+          <p id="menu-blurb" class="mt-5 text-base leading-7 text-muted"></p>
+          <p id="menu-footnote" class="mt-3 text-xs font-extrabold uppercase tracking-[0.18em] text-mango"></p>
         </div>
 
-        <div id="menu-cards" class="mt-12 grid gap-6 lg:grid-cols-2"></div>
+        <div id="menu-cards" class="mt-12 grid gap-5"></div>
       </div>
     </section>
 
-    <section id="how-it-works" class="py-16 sm:py-20 lg:py-24">
+    <section id="how-it-works" class="border-t border-edge bg-creamSoft py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl text-center">
-          <p id="how-it-works-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
-          <h2 id="how-it-works-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
+        <div class="mx-auto max-w-3xl text-center">
+          <p id="how-it-works-eyebrow" class="eyebrow text-mango"></p>
+          <h2 id="how-it-works-heading" class="display-headline mt-4"></h2>
         </div>
 
         <div id="how-it-works-steps" class="mt-12 grid gap-5 md:grid-cols-3"></div>
       </div>
     </section>
 
-    <section id="preorder" class="bg-white py-16 sm:py-20 lg:py-24">
+    <section id="preorder" class="border-t border-edge py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-3xl text-center">
-          <p id="preorder-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
-          <h2 id="preorder-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
-          <p id="preorder-blurb" class="mt-5 text-lg leading-8 text-muted"></p>
+          <p id="preorder-eyebrow" class="eyebrow text-mango"></p>
+          <h2 id="preorder-heading" class="display-headline mt-4"></h2>
+          <p id="preorder-blurb" class="mt-5 text-base leading-7 text-muted"></p>
           <p id="preorder-instructions" class="mt-3 text-sm font-semibold text-muted"></p>
         </div>
 
         <div class="mt-12 grid gap-6 lg:grid-cols-[1fr_0.92fr] lg:items-start">
-          <form id="preorder-form" class="rounded-[1.75rem] border border-blushDeep/20 bg-creamSoft p-5 shadow-soft sm:p-7" novalidate>
+          <form id="preorder-form" class="rounded-[1.75rem] border border-edge bg-creamSoft p-5 shadow-soft sm:p-7" novalidate>
             <div class="grid gap-5 sm:grid-cols-2">
               <div class="sm:col-span-2">
-                <label for="customer-name" class="text-sm font-extrabold text-ink">Customer name</label>
+                <label for="customer-name" class="eyebrow text-muted">Customer name</label>
                 <input
                   id="customer-name"
                   name="customerName"
                   type="text"
                   autocomplete="name"
-                  class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition placeholder:text-muted/60 focus:border-ube focus:ring-4 focus:ring-ube/15"
+                  class="mt-2 w-full rounded-2xl border border-edge bg-cream px-4 py-3 text-base text-ink outline-none transition placeholder:text-mutedSoft focus:border-mango focus:ring-4 focus:ring-mango/15"
                   placeholder="Your name"
                   required
                 />
               </div>
 
               <div>
-                <label for="product" class="text-sm font-extrabold text-ink">Product</label>
+                <label for="product" class="eyebrow text-muted">Product</label>
                 <select
                   id="product"
                   name="product"
-                  class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition focus:border-ube focus:ring-4 focus:ring-ube/15"
+                  class="mt-2 w-full rounded-2xl border border-edge bg-cream px-4 py-3 text-base text-ink outline-none transition focus:border-mango focus:ring-4 focus:ring-mango/15"
                   required
                 ></select>
               </div>
 
               <div>
-                <label for="size" class="text-sm font-extrabold text-ink">Size</label>
+                <label for="size" class="eyebrow text-muted">Size</label>
                 <select
                   id="size"
                   name="size"
-                  class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition focus:border-ube focus:ring-4 focus:ring-ube/15"
+                  class="mt-2 w-full rounded-2xl border border-edge bg-cream px-4 py-3 text-base text-ink outline-none transition focus:border-mango focus:ring-4 focus:ring-mango/15"
                   required
                 ></select>
               </div>
 
               <div>
-                <label for="quantity" class="text-sm font-extrabold text-ink">Quantity</label>
+                <label for="quantity" class="eyebrow text-muted">Quantity</label>
                 <input
                   id="quantity"
                   name="quantity"
@@ -267,17 +327,17 @@
                   min="1"
                   step="1"
                   value="1"
-                  class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition focus:border-ube focus:ring-4 focus:ring-ube/15"
+                  class="mt-2 w-full rounded-2xl border border-edge bg-cream px-4 py-3 text-base text-ink outline-none transition focus:border-mango focus:ring-4 focus:ring-mango/15"
                   required
                 />
               </div>
 
               <div>
-                <label for="payment-method" class="text-sm font-extrabold text-ink">Payment method</label>
+                <label for="payment-method" class="eyebrow text-muted">Payment method</label>
                 <select
                   id="payment-method"
                   name="paymentMethod"
-                  class="mt-2 w-full rounded-2xl border border-ube/15 bg-white px-4 py-3 text-base text-ink outline-none transition focus:border-ube focus:ring-4 focus:ring-ube/15"
+                  class="mt-2 w-full rounded-2xl border border-edge bg-cream px-4 py-3 text-base text-ink outline-none transition focus:border-mango focus:ring-4 focus:ring-mango/15"
                   required
                 ></select>
               </div>
@@ -286,10 +346,10 @@
             <div class="mt-7">
               <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <h3 class="font-display text-2xl font-bold text-ink">Pickup date</h3>
+                  <h3 class="font-display text-2xl uppercase tracking-tight text-ink">Pickup date</h3>
                   <p class="mt-1 text-sm leading-6 text-muted">Select a pickup drop before choosing a preferred time.</p>
                 </div>
-                <p id="selected-date-note" class="text-sm font-bold text-ube" aria-live="polite">No date selected</p>
+                <p id="selected-date-note" class="text-xs font-extrabold uppercase tracking-[0.18em] text-mango" aria-live="polite">No date selected</p>
               </div>
               <div
                 id="pickup-date-options"
@@ -302,10 +362,10 @@
             <div class="mt-7">
               <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <h3 class="font-display text-2xl font-bold text-ink">Preferred pickup time</h3>
+                  <h3 class="font-display text-2xl uppercase tracking-tight text-ink">Preferred pickup time</h3>
                   <p class="mt-1 text-sm leading-6 text-muted">Pick a preferred hourly time within the pickup window.</p>
                 </div>
-                <p id="selected-time-note" class="text-sm font-bold text-ube" aria-live="polite">No time selected</p>
+                <p id="selected-time-note" class="text-xs font-extrabold uppercase tracking-[0.18em] text-mango" aria-live="polite">No time selected</p>
               </div>
               <div
                 id="pickup-time-options"
@@ -316,18 +376,18 @@
             </div>
           </form>
 
-          <aside class="rounded-[1.75rem] bg-ube p-5 text-white shadow-soft sm:p-7">
+          <aside class="rounded-[1.75rem] border border-edge bg-creamSoft p-5 shadow-soft sm:p-7">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p class="text-sm font-extrabold uppercase tracking-[0.18em] text-mango">Message Preview</p>
-                <h3 class="mt-2 font-display text-3xl font-bold">Instagram DM draft</h3>
+                <p class="eyebrow text-mango">Message Preview</p>
+                <h3 class="mt-2 font-display text-3xl uppercase tracking-tight text-ink">Instagram DM draft</h3>
               </div>
-              <div class="rounded-2xl bg-white/10 px-4 py-3 text-sm font-extrabold text-mango">
+              <div class="rounded-2xl border border-edge bg-cream px-4 py-3 text-sm font-extrabold text-mango">
                 Total <span id="order-total">$0</span>
               </div>
             </div>
 
-            <div class="mt-6 rounded-2xl bg-white p-4 text-ink">
+            <div class="mt-6 rounded-2xl border border-edge bg-cream p-4">
               <pre
                 id="message-preview"
                 class="min-h-72 whitespace-pre-wrap break-words font-sans text-sm leading-6 text-ink"
@@ -341,7 +401,7 @@
               <button
                 id="copy-message"
                 type="button"
-                class="rounded-full bg-mango px-6 py-4 text-sm font-extrabold text-ink transition hover:bg-mango/90 focus:outline-none focus:ring-4 focus:ring-mango/35"
+                class="rounded-full bg-mango px-6 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-onAccent transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/35"
               >
                 Copy preorder message
               </button>
@@ -350,14 +410,14 @@
                 href="#"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="rounded-full border-2 border-white px-6 py-4 text-center text-sm font-extrabold text-white transition hover:bg-white hover:text-ube focus:outline-none focus:ring-4 focus:ring-white/30"
+                class="rounded-full border-2 border-ink px-6 py-4 text-center text-sm font-extrabold uppercase tracking-[0.18em] text-ink transition hover:bg-ink hover:text-cream focus:outline-none focus:ring-4 focus:ring-ink/20"
               >
                 Open Instagram DM
               </a>
             </div>
 
-            <p id="preorder-ig-handle-label" class="mt-4 text-sm font-bold text-mango"></p>
-            <p class="mt-5 text-sm leading-6 text-white/75">
+            <p id="preorder-ig-handle-label" class="mt-4 text-xs font-extrabold uppercase tracking-[0.18em] text-mango"></p>
+            <p class="mt-4 text-sm leading-6 text-muted">
               Copy the message first, then paste it into Instagram. Instagram DMs cannot be prefilled from this page.
             </p>
           </aside>
@@ -365,91 +425,122 @@
       </div>
     </section>
 
-    <section aria-labelledby="payment-heading" class="py-16 sm:py-20 lg:py-24">
+    <section id="payment-section" aria-labelledby="payment-heading" class="border-t border-edge bg-creamSoft py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
-        <div class="rounded-[1.75rem] bg-creamSoft p-6 shadow-soft sm:p-8 lg:p-10">
-          <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
-              <p id="payment-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
-              <h2 id="payment-heading" class="mt-3 font-display text-4xl font-bold text-ink"></h2>
-              <p id="payment-blurb" class="mt-5 leading-7 text-muted"></p>
-            </div>
-
-            <ul id="payment-list" class="grid gap-3 sm:grid-cols-2" aria-label="Accepted payment methods"></ul>
+        <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <p id="payment-eyebrow" class="eyebrow text-mango"></p>
+            <h2 id="payment-heading" class="display-headline mt-4"></h2>
+            <p id="payment-blurb" class="mt-5 leading-7 text-muted"></p>
           </div>
+
+          <ul id="payment-list" class="grid gap-3 sm:grid-cols-2" aria-label="Accepted payment methods"></ul>
         </div>
       </div>
     </section>
 
-    <section id="faq" class="bg-white py-16 sm:py-20 lg:py-24">
+    <section id="stats-section" class="border-t border-edge py-16 sm:py-20 lg:py-24" hidden>
+      <div class="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <p id="stats-eyebrow" class="eyebrow text-mango"></p>
+          <h2 id="stats-heading" class="display-headline mt-4"></h2>
+        </div>
+        <div id="stats-grid" class="mt-12 grid gap-4 sm:grid-cols-3"></div>
+      </div>
+    </section>
+
+    <section id="reviews-section" class="border-t border-edge bg-creamSoft py-16 sm:py-20 lg:py-24 overflow-hidden" hidden>
+      <div class="mx-auto max-w-6xl px-5 text-center sm:px-6 lg:px-8">
+        <p id="reviews-eyebrow" class="eyebrow text-mango"></p>
+        <h2 id="reviews-heading" class="display-headline mt-4"></h2>
+      </div>
+      <div id="reviews-marquee" class="marquee mt-12">
+        <div id="reviews-track" class="marquee-track"></div>
+      </div>
+    </section>
+
+    <section id="faq" class="border-t border-edge py-16 sm:py-20 lg:py-24">
       <div class="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8">
         <div class="text-center">
-          <p id="faq-eyebrow" class="text-sm font-extrabold uppercase tracking-[0.18em] text-ube"></p>
-          <h2 id="faq-heading" class="mt-3 font-display text-4xl font-bold text-ink sm:text-5xl"></h2>
+          <p id="faq-eyebrow" class="eyebrow text-mango"></p>
+          <h2 id="faq-heading" class="display-headline mt-4"></h2>
         </div>
 
         <div id="faq-list" class="mt-10 space-y-4"></div>
 
-        <p id="legal-notice" class="mt-10 rounded-2xl border border-ube/10 bg-creamSoft px-5 py-4 text-center text-xs leading-6 text-muted" hidden></p>
+        <p id="legal-notice" class="mt-10 rounded-2xl border border-edge bg-creamSoft px-5 py-4 text-center text-xs leading-6 text-muted" hidden></p>
+      </div>
+    </section>
+
+    <section id="big-cta-section" class="bg-mango py-20 sm:py-24 lg:py-28" hidden>
+      <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+        <div class="grid items-end gap-8 lg:grid-cols-[1.4fr_0.6fr]">
+          <div>
+            <p id="big-cta-eyebrow" class="eyebrow text-onAccent/70"></p>
+            <h2 id="big-cta-heading" class="display-headline mt-4 text-onAccent"></h2>
+            <p id="big-cta-body" class="mt-5 max-w-xl text-base leading-7 text-onAccent/85"></p>
+          </div>
+          <a
+            id="big-cta-link"
+            href="#"
+            class="inline-flex justify-self-start rounded-full bg-onAccent px-8 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-mango transition hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-onAccent/30 lg:justify-self-end"
+          ></a>
+        </div>
       </div>
     </section>
   </main>
 
-  <footer class="bg-ube py-12 text-white">
+  <footer class="border-t border-edge bg-creamSoft py-12">
     <div class="mx-auto grid max-w-6xl gap-8 px-5 sm:px-6 md:grid-cols-[1.4fr_0.8fr_0.8fr] lg:px-8">
       <div>
-        <p id="footer-brand" class="font-display text-3xl font-bold text-mango"></p>
-        <p id="footer-tagline" class="mt-4 max-w-md leading-7 text-white/75"></p>
+        <p id="footer-brand" class="font-display text-3xl uppercase tracking-tight text-mango"></p>
+        <p id="footer-tagline" class="mt-4 max-w-md leading-7 text-muted"></p>
       </div>
 
       <div>
-        <h2 class="text-sm font-extrabold uppercase tracking-[0.18em] text-mango">Links</h2>
-        <ul class="mt-4 space-y-3 text-white/75">
-          <li><a class="transition hover:text-mango" href="#menu">Menu</a></li>
-          <li><a class="transition hover:text-mango" href="#how-it-works">How It Works</a></li>
-          <li><a class="transition hover:text-mango" href="#preorder">Preorder</a></li>
-          <li><a class="transition hover:text-mango" href="#faq">FAQ</a></li>
+        <h2 class="eyebrow text-mango">Links</h2>
+        <ul class="mt-4 space-y-3 text-sm text-muted">
+          <li><a class="transition hover:text-ink" href="#menu">Menu</a></li>
+          <li><a class="transition hover:text-ink" href="#how-it-works">How It Works</a></li>
+          <li><a class="transition hover:text-ink" href="#preorder">Preorder</a></li>
+          <li><a class="transition hover:text-ink" href="#faq">FAQ</a></li>
         </ul>
       </div>
 
       <div>
-        <h2 class="text-sm font-extrabold uppercase tracking-[0.18em] text-mango">Social</h2>
-        <ul class="mt-4 space-y-3 text-white/75">
+        <h2 class="eyebrow text-mango">Social</h2>
+        <ul class="mt-4 space-y-3 text-sm text-muted">
           <li>
             <a
               id="footer-instagram"
-              class="transition hover:text-mango"
+              class="transition hover:text-ink"
               href="#"
               target="_blank"
               rel="noopener noreferrer"
-            >
-              Instagram
-            </a>
+            >Instagram</a>
           </li>
           <li>
             <a
               id="footer-tiktok"
-              class="transition hover:text-mango"
+              class="transition hover:text-ink"
               href="#"
               target="_blank"
               rel="noopener noreferrer"
-            >
-              TikTok
-            </a>
+            >TikTok</a>
           </li>
         </ul>
       </div>
     </div>
 
-    <div class="mx-auto mt-10 max-w-6xl border-t border-white/15 px-5 pt-6 text-sm text-white/55 sm:px-6 lg:px-8">
+    <div class="mx-auto mt-10 max-w-6xl border-t border-edge px-5 pt-6 text-xs font-extrabold uppercase tracking-[0.18em] text-mutedSoft sm:px-6 lg:px-8">
       <p id="footer-location"></p>
     </div>
   </footer>
 
-  <div class="sticky-bar-bottom fixed inset-x-0 bottom-0 z-40 border-t border-ube/15 bg-cream/95 px-4 pt-3 backdrop-blur-xl md:hidden" role="region" aria-label="Quick actions">
+  <div class="sticky-bar-bottom fixed inset-x-0 bottom-0 z-40 border-t border-edge bg-cream/95 px-4 pt-3 backdrop-blur-xl md:hidden" role="region" aria-label="Quick actions">
     <div class="mx-auto flex max-w-md items-center gap-3">
-      <a href="#preorder" class="flex-1 rounded-full bg-ube px-5 py-3 text-center text-sm font-extrabold text-white shadow-sm transition hover:bg-ube/90 focus:outline-none focus:ring-4 focus:ring-ube/20">Preorder</a>
-      <a id="sticky-instagram-link" href="#" target="_blank" rel="noopener noreferrer" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-ube text-ube transition hover:bg-ube hover:text-white focus:outline-none focus:ring-4 focus:ring-ube/20" aria-label="Instagram">
+      <a href="#preorder" class="flex-1 rounded-full bg-mango px-5 py-3 text-center text-xs font-extrabold uppercase tracking-[0.18em] text-onAccent shadow-sm transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/30">Order Now</a>
+      <a id="sticky-instagram-link" href="#" target="_blank" rel="noopener noreferrer" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-ink text-ink transition hover:bg-ink hover:text-cream focus:outline-none focus:ring-4 focus:ring-ink/20" aria-label="Instagram">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" aria-hidden="true">
           <rect x="3" y="3" width="18" height="18" rx="5" ry="5"></rect>
           <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>

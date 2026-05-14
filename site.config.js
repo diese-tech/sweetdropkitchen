@@ -5,104 +5,138 @@ window.SITE_CONFIG = {
     initials: "SD",
     locationLabel: "Your City, FL",
     description:
-      "Weekly preorder drops from a small home kitchen. Order by Instagram DM, pick up local. No checkout, no shipping.",
+      "A small home kitchen running weekly preorder drops. Six desserts. Seven days. Then gone.",
     siteUrl: ""
   },
 
+  announcement: {
+    enabled: true,
+    text: "MADE FROM A HOME KITCHEN. PICKUP ONLY.",
+    href: "#about"
+  },
+
   theme: {
+    style: "bold",
     colors: {
-      bg: "#fff7e8",
-      bgSoft: "#fffaf1",
-      primary: "#5a247a",
-      primarySoft: "#f1e4ff",
-      accent: "#ffc533",
-      accentDeep: "#d89300",
-      blush: "#ffe6ef",
-      blushDeep: "#dd6f9b",
-      ink: "#24180d",
-      muted: "#6b5b48"
+      bg: "#0b0907",
+      bgSoft: "#16110d",
+      surface: "#1b1611",
+      primary: "#ffffff",
+      primarySoft: "#1f1812",
+      accent: "#f5a623",
+      accentDeep: "#d68910",
+      blush: "#1b1611",
+      blushDeep: "#f5a623",
+      ink: "#ffffff",
+      muted: "#9a8e7d",
+      mutedSoft: "#5b5347",
+      edge: "#2a221a",
+      onAccent: "#0b0907"
     },
     fonts: {
-      display: ["Playfair Display", "Georgia", "serif"],
-      sans: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"]
+      display: ["Anton", "Impact", "Arial Black", "sans-serif"],
+      sans: ["Inter", "system-ui", "-apple-system", "sans-serif"]
     },
     googleFontsHref:
-      "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      "https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap"
   },
 
   hero: {
-    headlineLines: ["Weekly", "Preorder Drops", "Made Simple"],
+    eyebrow: "FRESH WEEKLY · LOCAL PICKUP · DM TO ORDER",
+    headlineLines: [
+      { text: "SIX DESSERTS.", color: "ink" },
+      { text: "ONE DROP.", color: "accent" }
+    ],
     subheadline:
-      "Small-batch desserts made the day of pickup. Order by Instagram DM. No checkout, no shipping.",
-    primaryCta: { label: "Preorder this week", href: "#preorder" },
-    secondaryCta: { label: "Follow on Instagram", href: "https://www.instagram.com/sweetdropkitchen/" },
-    image: {
-      src: "",
-      alt: "This week's drop."
-    }
+      "Small-batch desserts, made the day of pickup. Six flavors. Seven days. Then gone.",
+    primaryCta: { label: "ORDER NOW", href: "#preorder" },
+    secondaryCta: { label: "FOLLOW @SWEETDROP", href: "https://www.instagram.com/sweetdropkitchen/" },
+    countdown: {
+      enabled: true,
+      label: "NEXT DROP IN"
+    },
+    image: { src: "", alt: "This week's drop." }
   },
 
   about: {
-    eyebrow: "About",
-    headline: "Made by one person, in a home kitchen.",
+    eyebrow: "BAKED DIFFERENT",
+    headingLines: [
+      { text: "MADE BY ONE PERSON.", color: "ink" },
+      { text: "ON PURPOSE.", color: "accent" }
+    ],
     body:
       "Sweet Drop Kitchen runs as a small weekly operation. Every order is made the day of pickup, in batches small enough to keep the texture right.",
+    bullets: [
+      { title: "SMALL BATCHES", body: "Made the day of pickup, in quantities small enough to control quality." },
+      { title: "SIX FLAVORS A WEEK", body: "Six rotating desserts. Some signatures stay. Most rotate out." },
+      { title: "ONE PERSON, ONE KITCHEN", body: "No staff, no second location. Direct from the maker." }
+    ],
     photo: "",
     signedBy: "— The Sweet Drop Kitchen"
   },
 
   menu: {
-    sectionEyebrow: "Featured Menu",
-    sectionHeading: "This week's drops",
-    sectionBlurb: "Preorder by DM. Pick up local. Fresh each drop.",
+    sectionEyebrow: "THE DROP",
+    sectionHeadingLines: [
+      { text: "THIS WEEK'S", color: "ink" },
+      { text: "LINEUP.", color: "accent" }
+    ],
+    sectionBlurb: "Six flavors. Seven days. Then gone.",
+    sectionFootnote: "NEW DROP EVERY FRIDAY.",
+    layout: "asymmetric",
     products: [
       {
         slug: "mango-sticky-rice",
         name: "Mango Sticky Rice",
-        description: "Classic mango sticky rice with fresh mango and coconut cream.",
+        description: "The signature. Sweet coconut sticky rice with fresh mango on top.",
         sizes: [
           { label: "Cup", price: 7 },
           { label: "Box", price: 12 }
         ],
         tags: ["gluten-free", "vegan"],
         allergens: ["coconut"],
-        photo: ""
+        photo: "",
+        badge: "SIGNATURE",
+        featured: true
       },
       {
         slug: "ube-dessert-cup",
         name: "Ube Dessert Cup",
-        description: "Creamy ube dessert layered and portioned for pickup.",
+        description: "Creamy ube layered with coconut cream and rice pearls.",
         sizes: [
           { label: "Cup", price: 8 },
           { label: "Box", price: 13 }
         ],
         tags: [],
         allergens: ["dairy", "egg"],
-        photo: ""
+        photo: "",
+        badge: ""
       },
       {
         slug: "strawberry-matcha-cup",
         name: "Strawberry Matcha Cup",
-        description: "Strawberry + matcha dessert cup made for weekly drops.",
+        description: "Strawberry + matcha layered cup, lightly sweet.",
         sizes: [
           { label: "Cup", price: 9 },
           { label: "Box", price: 14 }
         ],
         tags: [],
         allergens: ["dairy"],
-        photo: ""
+        photo: "",
+        badge: "NEW"
       }
     ]
   },
 
   preorder: {
     enabled: true,
-    sectionEyebrow: "Pickup & Preorder",
-    sectionHeading: "Build your preorder message.",
-    sectionBlurb:
-      "Weekly preorder drops for local food sellers. Pickup dates are announced regularly.",
-    instructions:
-      "Copy your preorder message and send it by Instagram DM. No checkout required.",
+    sectionEyebrow: "PICKUP & PREORDER",
+    sectionHeadingLines: [
+      { text: "BUILD YOUR", color: "ink" },
+      { text: "PREORDER.", color: "accent" }
+    ],
+    sectionBlurb: "Pick what you want, pick when. Copy the message, send by DM.",
+    instructions: "Copy your preorder message and send it by Instagram DM. No checkout required.",
     paymentMethods: ["Cash App", "Venmo", "Apple Pay", "Cash"],
     instagramDmUrl: "https://ig.me/m/sweetdropkitchen",
     instagramHandleLabel: "@sweetdropkitchen"
@@ -146,33 +180,62 @@ window.SITE_CONFIG = {
   },
 
   howItWorks: {
-    eyebrow: "How It Works",
-    heading: "Simple preorder pickup",
+    eyebrow: "HOW IT WORKS",
+    headingLines: [
+      { text: "SIMPLE", color: "ink" },
+      { text: "PREORDER PICKUP.", color: "accent" }
+    ],
     steps: [
-      {
-        title: "Submit preorder",
-        body: "Send your name, quantity, size, and preferred pickup time."
-      },
-      {
-        title: "Confirm payment/pickup time",
-        body: "Your order and pickup time are confirmed. Payment may be requested to secure the order."
-      },
-      {
-        title: "Pick up locally",
-        body: "Pick up your fresh-made order at your local drop location."
-      }
+      { title: "SUBMIT PREORDER", body: "Send your name, quantity, size, and preferred pickup time." },
+      { title: "CONFIRM ORDER", body: "Your order and pickup time are confirmed by DM. Payment may be requested to secure." },
+      { title: "PICK UP LOCAL", body: "Pick up your fresh-made order at the drop location." }
     ]
   },
 
   payment: {
-    eyebrow: "Payment",
-    heading: "Accepted payment methods",
+    eyebrow: "PAYMENT",
+    headingLines: [
+      { text: "ACCEPTED", color: "ink" },
+      { text: "PAYMENT METHODS.", color: "accent" }
+    ],
     blurb: "Payment may be required to secure larger orders or new customer orders."
+  },
+
+  stats: {
+    enabled: true,
+    eyebrow: "THE OPERATION",
+    headingLines: [
+      { text: "ONE KITCHEN.", color: "ink" },
+      { text: "FRIDAY DROPS.", color: "accent" }
+    ],
+    items: [
+      { value: "FRIDAY", label: "DROP DAY" },
+      { value: "6", label: "FLAVORS PER WEEK" },
+      { value: "100%", label: "HOME KITCHEN" }
+    ]
+  },
+
+  reviews: {
+    enabled: false,
+    eyebrow: "WORD OF MOUTH",
+    headingLines: [{ text: "FROM CUSTOMERS.", color: "ink" }],
+    items: []
+  },
+
+  bigCta: {
+    enabled: true,
+    eyebrow: "READY?",
+    headingLines: [
+      { text: "FIND YOUR", color: "ink-soft" },
+      { text: "DROP.", color: "ink" }
+    ],
+    body: "Weekly menu posts Friday. DM us to claim yours.",
+    cta: { label: "ORDER NOW →", href: "#preorder" }
   },
 
   faq: {
     eyebrow: "FAQ",
-    heading: "Good to know",
+    headingLines: [{ text: "GOOD TO KNOW.", color: "ink" }],
     items: [
       { q: "Is this pickup only?", a: "Yes — local pickup only." },
       { q: "Do I need to preorder?", a: "Yes. Orders are coordinated by DM before each drop." },

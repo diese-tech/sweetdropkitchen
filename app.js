@@ -1,12 +1,6 @@
 (function () {
   const CONFIG = window.SITE_CONFIG;
 
-  const HERO_IMAGE_FALLBACK =
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='1125' viewBox='0 0 900 1125'%3E%3Crect width='900' height='1125' fill='%23fff1ce'/%3E%3Cellipse cx='445' cy='620' rx='300' ry='235' fill='%23ffffff'/%3E%3Cellipse cx='450' cy='625' rx='245' ry='180' fill='%23f8e6d4'/%3E%3Cpath d='M270 475c105-105 250-125 370-65-55 120-175 210-330 210-50 0-82-55-40-145z' fill='%23ffc533'/%3E%3Cpath d='M380 675c90-45 205-35 285 35-70 75-220 105-340 35 0-28 20-52 55-70z' fill='%235a247a'/%3E%3Cpath d='M282 725c75 75 240 110 365 35' fill='none' stroke='%23ffffff' stroke-width='28' stroke-linecap='round'/%3E%3Ccircle cx='250' cy='260' r='48' fill='%23ffc533' opacity='.55'/%3E%3Ccircle cx='690' cy='300' r='62' fill='%23f1e4ff'/%3E%3Ctext x='450' y='1000' text-anchor='middle' font-family='Arial, sans-serif' font-size='34' font-weight='700' fill='%235a247a'%3EAdd your hero photo%3C/text%3E%3C/svg%3E";
-
-  const PRODUCT_IMAGE_FALLBACK =
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='520' viewBox='0 0 900 520'%3E%3Crect width='900' height='520' fill='%23fff7e8'/%3E%3Ccircle cx='455' cy='260' r='180' fill='%23ffffff'/%3E%3Cpath d='M300 215c86-88 210-105 305-55-48 94-146 160-270 158-43 0-70-43-35-103z' fill='%23ffc533'/%3E%3Cellipse cx='455' cy='322' rx='180' ry='72' fill='%23f5e2cd'/%3E%3Cpath d='M335 340c75 34 165 35 245 0' stroke='%23ffffff' stroke-width='22' stroke-linecap='round' fill='none'/%3E%3C/svg%3E";
-
   const STATUS_TEXT = {
     open: "Open",
     limited: "Few slots left",
@@ -18,8 +12,11 @@
   const state = {
     selectedDateId: "",
     selectedTime: "",
-    messageCopied: false
+    messageCopied: false,
+    countdownTimer: null
   };
+
+  // ─── DOM helpers ──────────────────────────────────────────────────────────────
 
   const $ = (id) => document.getElementById(id);
 
@@ -44,7 +41,87 @@
     if (el && value) el.setAttribute(attr, value);
   }
 
-  // ─── SEO: title, meta, OG, Twitter ───────────────────────────────────────────
+  // ─── Color-split heading system ──────────────────────────────────────────────
+
+  const COLOR_MAP_DEFAULT = {
+    ink: "text-ink",
+    accent: "text-mango",
+    primary: "text-ube",
+    muted: "text-muted",
+    "ink-soft": "text-ink/40",
+    "accent-soft": "text-mango/70"
+  };
+
+  const COLOR_MAP_ON_ACCENT = {
+    ink: "text-onAccent",
+    accent: "text-onAccent",
+    primary: "text-onAccent",
+    muted: "text-onAccent/70",
+    "ink-soft": "text-onAccent/60",
+    "accent-soft": "text-onAccent/70"
+  };
+
+  function colorClassFor(color, map) {
+    return (map || COLOR_MAP_DEFAULT)[color] || "text-ink";
+  }
+
+  function normalizeHeadingLines(input, fallbackText) {
+    if (Array.isArray(input)) {
+      return input.map((entry, i) =>
+        typeof entry === "string"
+          ? { text: entry, color: i === 0 ? "ink" : i === 1 ? "accent" : "ink" }
+          : { text: entry.text || "", color: entry.color || "ink" }
+      );
+    }
+    if (typeof input === "string" && input) return [{ text: input, color: "ink" }];
+    if (fallbackText) return [{ text: fallbackText, color: "ink" }];
+    return [];
+  }
+
+  function sizeClassesForHeadline(count) {
+    if (count <= 1) return ["text-6xl sm:text-7xl lg:text-[5.5rem]"];
+    if (count === 2) {
+      return [
+        "text-6xl sm:text-7xl lg:text-[5.5rem]",
+        "text-6xl sm:text-7xl lg:text-[5.5rem]"
+      ];
+    }
+    return [
+      "text-5xl sm:text-6xl lg:text-[5rem]",
+      "text-5xl sm:text-6xl lg:text-[4.5rem]",
+      "text-xl uppercase tracking-[0.22em] sm:text-2xl"
+    ];
+  }
+
+  function sizeClassesForSectionHeading(count) {
+    if (count <= 1) return ["text-4xl sm:text-5xl lg:text-6xl"];
+    if (count === 2)
+      return ["text-4xl sm:text-5xl lg:text-6xl", "text-4xl sm:text-5xl lg:text-6xl"];
+    return [
+      "text-3xl sm:text-4xl lg:text-5xl",
+      "text-3xl sm:text-4xl lg:text-5xl",
+      "text-xl sm:text-2xl uppercase tracking-[0.22em]"
+    ];
+  }
+
+  function renderHeadingLines(targetId, input, opts) {
+    const el = $(targetId);
+    if (!el) return;
+    const lines = normalizeHeadingLines(input);
+    if (!lines.length) { el.innerHTML = ""; return; }
+    const sizes = (opts && opts.sizes) || sizeClassesForSectionHeading(lines.length);
+    const colorMap = (opts && opts.colorMap) || COLOR_MAP_DEFAULT;
+    el.innerHTML = lines
+      .map((line, i) => {
+        const sizeCls = sizes[i] || sizes[sizes.length - 1];
+        const colorCls = colorClassFor(line.color, colorMap);
+        const display = "font-display uppercase";
+        return `<span class="block ${display} ${sizeCls} ${colorCls}">${escapeHtml(line.text)}</span>`;
+      })
+      .join("");
+  }
+
+  // ─── SEO ──────────────────────────────────────────────────────────────────────
 
   function renderSeoMeta() {
     const name = CONFIG.business.name;
@@ -68,8 +145,7 @@
       setMetaAttr('meta[name="twitter:image"]', "content", heroSrc);
     }
 
-    const canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical && CONFIG.business.siteUrl) {
+    if (CONFIG.business.siteUrl && !document.querySelector('link[rel="canonical"]')) {
       const link = document.createElement("link");
       link.rel = "canonical";
       link.href = CONFIG.business.siteUrl;
@@ -77,22 +153,18 @@
     }
   }
 
-  // ─── Favicon ─────────────────────────────────────────────────────────────────
-
   function renderFavicon() {
-    const accent = (CONFIG.theme.colors.accent || "#ffc533").replace("#", "%23");
-    const primary = (CONFIG.theme.colors.primary || "#5a247a").replace("#", "%23");
+    const accent = (CONFIG.theme.colors.accent || "#f5a623").replace("#", "%23");
+    const fg = (CONFIG.theme.colors.onAccent || CONFIG.theme.colors.ink || "#0b0907").replace("#", "%23");
     const initials = (CONFIG.business.initials || "").replace(/[<>&"']/g, "");
     const svg =
       `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>` +
       `<rect width='100' height='100' rx='22' fill='${accent}'/>` +
       `<text x='50' y='66' text-anchor='middle' font-family='system-ui,-apple-system,Segoe UI,sans-serif' ` +
-      `font-size='46' font-weight='800' fill='${primary}'>${initials}</text></svg>`;
+      `font-size='46' font-weight='800' fill='${fg}'>${initials}</text></svg>`;
     const link = $("favicon");
     if (link) link.href = `data:image/svg+xml;utf8,${svg}`;
   }
-
-  // ─── JSON-LD ──────────────────────────────────────────────────────────────────
 
   function renderJsonLd() {
     const sameAs = [
@@ -119,6 +191,41 @@
     if (!existing) document.head.appendChild(script);
   }
 
+  // ─── Placeholder SVG (theme-aware) ────────────────────────────────────────────
+
+  function placeholderSvg(label, w, h) {
+    const c = CONFIG.theme.colors;
+    const bg = encodeURIComponent(c.bgSoft || c.bg);
+    const accent = encodeURIComponent(c.accent);
+    const ink = encodeURIComponent(c.muted);
+    const safeLabel = String(label || "").replace(/[<>&"']/g, "");
+    const cx = w / 2;
+    const cy = h / 2;
+    const r = Math.min(w, h) * 0.28;
+    const svg =
+      `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>` +
+      `<rect width='${w}' height='${h}' fill='${bg}'/>` +
+      `<circle cx='${cx}' cy='${cy - h * 0.05}' r='${r}' fill='${accent}' opacity='0.35'/>` +
+      `<text x='${cx}' y='${cy + h * 0.32}' text-anchor='middle' ` +
+      `font-family='system-ui,sans-serif' font-size='${Math.round(w * 0.035)}' font-weight='700' ` +
+      `fill='${ink}' letter-spacing='2'>${safeLabel}</text>` +
+      `</svg>`;
+    return `data:image/svg+xml;utf8,${svg.replace(/%/g, "%25").replace(/#/g, "%23")}`;
+  }
+
+  // ─── Announcement bar ────────────────────────────────────────────────────────
+
+  function renderAnnouncement() {
+    const bar = $("announcement-bar");
+    if (!bar) return;
+    const cfg = CONFIG.announcement;
+    if (!cfg || !cfg.enabled || !cfg.text) { bar.hidden = true; return; }
+    bar.hidden = false;
+    setText("announcement-text", cfg.text);
+    if (cfg.href) bar.setAttribute("href", cfg.href);
+    else bar.removeAttribute("href");
+  }
+
   // ─── Header ───────────────────────────────────────────────────────────────────
 
   function renderHeader() {
@@ -131,20 +238,13 @@
   // ─── Hero ─────────────────────────────────────────────────────────────────────
 
   function renderHero() {
-    setText("hero-eyebrow", CONFIG.business.locationLabel);
+    setText("hero-eyebrow", CONFIG.hero.eyebrow || CONFIG.business.locationLabel || "");
 
-    const headline = $("hero-headline");
-    if (headline) {
-      const lines = CONFIG.hero.headlineLines || [];
-      const classes = [
-        "block text-6xl font-bold text-mango sm:text-7xl lg:text-[5.25rem]",
-        "mt-1 block text-5xl font-bold text-ube sm:text-6xl lg:text-[4.6rem]",
-        "mt-3 block text-xl font-semibold uppercase tracking-[0.22em] text-ink/80 sm:text-2xl"
-      ];
-      headline.innerHTML = lines
-        .map((line, i) => `<span class="${classes[i] || classes[2]}">${escapeHtml(line)}</span>`)
-        .join("");
-    }
+    renderHeadingLines("hero-headline", CONFIG.hero.headlineLines, {
+      sizes: sizeClassesForHeadline(
+        normalizeHeadingLines(CONFIG.hero.headlineLines).length
+      )
+    });
 
     setText("hero-subheadline", CONFIG.hero.subheadline);
 
@@ -167,8 +267,55 @@
     const img = $("hero-image");
     if (img) {
       const src = CONFIG.hero.image && CONFIG.hero.image.src;
-      img.src = src || HERO_IMAGE_FALLBACK;
+      img.src = src || placeholderSvg("Add your hero photo", 900, 1125);
       img.alt = (CONFIG.hero.image && CONFIG.hero.image.alt) || `${CONFIG.business.name} — this week's drop.`;
+    }
+  }
+
+  // ─── Countdown ────────────────────────────────────────────────────────────────
+
+  function pad2(n) { return n < 10 ? `0${n}` : String(n); }
+
+  function renderCountdown() {
+    const container = $("hero-countdown");
+    if (!container) return;
+    const cfg = CONFIG.hero.countdown;
+    const targetId = getSoonestSelectableId();
+    const target = CONFIG.pickup.dates.find((d) => d.id === targetId);
+
+    if (!cfg || !cfg.enabled || !target || !target.isoDate) {
+      container.hidden = true;
+      stopCountdownTicker();
+      return;
+    }
+
+    container.hidden = false;
+    setText("countdown-label", cfg.label || "Next drop in");
+
+    const targetMs = new Date(target.isoDate + "T00:00:00").getTime();
+
+    function tick() {
+      const now = Date.now();
+      const diffSec = Math.max(0, Math.floor((targetMs - now) / 1000));
+      const days = Math.floor(diffSec / 86400);
+      const hrs = Math.floor((diffSec % 86400) / 3600);
+      const min = Math.floor((diffSec % 3600) / 60);
+      const sec = diffSec % 60;
+      setText("countdown-days", pad2(days));
+      setText("countdown-hrs", pad2(hrs));
+      setText("countdown-min", pad2(min));
+      setText("countdown-sec", pad2(sec));
+    }
+
+    tick();
+    stopCountdownTicker();
+    state.countdownTimer = setInterval(tick, 1000);
+  }
+
+  function stopCountdownTicker() {
+    if (state.countdownTimer) {
+      clearInterval(state.countdownTimer);
+      state.countdownTimer = null;
     }
   }
 
@@ -181,23 +328,45 @@
     section.hidden = false;
 
     setText("about-eyebrow", CONFIG.about.eyebrow || "About");
-    setText("about-heading", CONFIG.about.headline || "");
+    renderHeadingLines(
+      "about-heading",
+      CONFIG.about.headingLines || CONFIG.about.headline,
+      {}
+    );
     setText("about-body", CONFIG.about.body || "");
     setText("about-signed-by", CONFIG.about.signedBy || "");
 
-    const photo = $("about-photo");
-    if (!photo) return;
+    const bulletsEl = $("about-bullets");
+    if (bulletsEl) {
+      if (CONFIG.about.bullets && CONFIG.about.bullets.length) {
+        bulletsEl.hidden = false;
+        bulletsEl.innerHTML = CONFIG.about.bullets
+          .map(
+            (b) =>
+              `<li>
+                <p class="eyebrow text-mango">${escapeHtml(b.title || "")}</p>
+                <p class="mt-1 text-sm leading-6 text-muted">${escapeHtml(b.body || "")}</p>
+              </li>`
+          )
+          .join("");
+      } else {
+        bulletsEl.hidden = true;
+        bulletsEl.innerHTML = "";
+      }
+    }
 
-    if (CONFIG.about.photo) {
-      photo.src = CONFIG.about.photo;
-      photo.alt = CONFIG.business.name;
-      photo.hidden = false;
-      const grid = photo.parentElement;
-      if (grid) grid.className = "grid items-center gap-8 sm:grid-cols-[0.9fr_1.1fr]";
-    } else {
-      photo.hidden = true;
-      const grid = photo.parentElement;
-      if (grid) grid.className = "mx-auto max-w-2xl text-center";
+    const photo = $("about-photo");
+    const grid = $("about-grid");
+    if (photo) {
+      if (CONFIG.about.photo) {
+        photo.src = CONFIG.about.photo;
+        photo.alt = CONFIG.business.name;
+        photo.hidden = false;
+        if (grid) grid.className = "grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center";
+      } else {
+        photo.hidden = true;
+        if (grid) grid.className = "mx-auto grid max-w-3xl gap-10";
+      }
     }
   }
 
@@ -216,81 +385,145 @@
     banner.textContent = CONFIG.pickup.pausedMessage || fallback;
   }
 
-  // ─── Menu section with allergen/tag chips ────────────────────────────────────
+  // ─── Menu section ─────────────────────────────────────────────────────────────
 
   function renderMenuSection() {
     setText("menu-eyebrow", CONFIG.menu.sectionEyebrow);
-    setText("menu-heading", CONFIG.menu.sectionHeading);
-    setText("menu-blurb", CONFIG.menu.sectionBlurb);
+    renderHeadingLines(
+      "menu-heading",
+      CONFIG.menu.sectionHeadingLines || CONFIG.menu.sectionHeading,
+      {}
+    );
+    setText("menu-blurb", CONFIG.menu.sectionBlurb || "");
+    setText("menu-footnote", CONFIG.menu.sectionFootnote || "");
 
     const wrap = $("menu-cards");
     if (!wrap) return;
 
-    wrap.innerHTML = CONFIG.menu.products
-      .map((product) => {
-        const priceSummary = (product.sizes || [])
-          .map((s) => `${escapeHtml(s.label)} $${s.price}`)
-          .join(" &middot; ");
+    const layout = CONFIG.menu.layout || "grid";
+    const products = CONFIG.menu.products || [];
+    const featuredIdx = (() => {
+      const explicit = products.findIndex((p) => p.featured);
+      return explicit >= 0 ? explicit : 0;
+    })();
 
-        const photoSrc = product.photo || PRODUCT_IMAGE_FALLBACK;
+    const useAsymmetric = layout === "asymmetric" && products.length >= 3;
 
-        const tagChips = (product.tags || [])
-          .map(
-            (t) =>
-              `<span class="rounded-full bg-ubeSoft px-3 py-1 text-xs font-extrabold text-ube">${escapeHtml(t)}</span>`
-          )
-          .join("");
+    if (useAsymmetric) {
+      wrap.className = "mt-12 grid gap-5 lg:grid-cols-3 lg:auto-rows-fr";
+    } else {
+      wrap.className = "mt-12 grid gap-5 lg:grid-cols-2";
+    }
 
-        const allergenChips = (product.allergens || [])
-          .map(
-            (a) =>
-              `<span class="rounded-full bg-blush px-3 py-1 text-xs font-extrabold text-blushDeep">Contains ${escapeHtml(a)}</span>`
-          )
-          .join("");
-
-        const chips = tagChips + allergenChips;
-        const chipsRow = chips
-          ? `<div class="mt-4 flex flex-wrap gap-2" aria-label="Dietary info">${chips}</div>`
-          : "";
-
-        return `<article class="overflow-hidden rounded-[1.75rem] border border-ube/10 bg-creamSoft shadow-sm">
-          <img
-            class="h-72 w-full object-cover"
-            alt="${escapeHtml(product.name)}."
-            src="${escapeHtml(photoSrc)}"
-            loading="lazy"
-            decoding="async"
-          />
-          <div class="p-6 sm:p-8">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <h3 class="font-display text-3xl font-bold text-ink">${escapeHtml(product.name)}</h3>
-              <div class="shrink-0 rounded-2xl bg-mango/25 px-4 py-3 text-sm font-extrabold text-ink">${priceSummary}</div>
-            </div>
-            <p class="mt-4 leading-7 text-muted">${escapeHtml(product.description)}</p>
-            ${chipsRow}
-            <a
-              href="#preorder"
-              class="mt-7 inline-flex w-full justify-center rounded-full bg-ube px-6 py-4 text-sm font-extrabold text-white transition hover:bg-ube/90 focus:outline-none focus:ring-4 focus:ring-ube/20"
-            >Request ${escapeHtml(product.name)}</a>
-          </div>
-        </article>`;
-      })
+    wrap.innerHTML = products
+      .map((product, i) =>
+        useAsymmetric && i === featuredIdx
+          ? renderFeaturedCard(product)
+          : renderProductCard(product)
+      )
       .join("");
   }
 
-  // ─── How it works ─────────────────────────────────────────────────────────────
+  function chipsHtml(product) {
+    const tagChips = (product.tags || [])
+      .map(
+        (t) =>
+          `<span class="rounded-full border border-edge bg-cream/60 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-mango">${escapeHtml(t)}</span>`
+      )
+      .join("");
+    const allergenChips = (product.allergens || [])
+      .map(
+        (a) =>
+          `<span class="rounded-full border border-edge bg-cream/60 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-muted">Contains ${escapeHtml(a)}</span>`
+      )
+      .join("");
+    const chips = tagChips + allergenChips;
+    return chips
+      ? `<div class="mt-4 flex flex-wrap gap-2" aria-label="Dietary info">${chips}</div>`
+      : "";
+  }
+
+  function priceSummary(product) {
+    return (product.sizes || [])
+      .map((s) => `${escapeHtml(s.label)} $${s.price}`)
+      .join(" · ");
+  }
+
+  function badgeOverlayHtml(product) {
+    if (!product.badge) return "";
+    return `<span class="absolute left-4 top-4 rounded-md border border-white/40 bg-black/45 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur-sm">${escapeHtml(product.badge)}</span>`;
+  }
+
+  function badgeSmallHtml(product) {
+    if (!product.badge) return "";
+    return `<span class="absolute left-3 top-3 rounded-md border border-white/40 bg-black/40 px-2 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-white backdrop-blur-sm">${escapeHtml(product.badge)}</span>`;
+  }
+
+  function renderFeaturedCard(product) {
+    const photoSrc = product.photo || placeholderSvg(product.name, 1200, 900);
+    return `<article class="group relative overflow-hidden rounded-[1.75rem] border border-edge bg-creamSoft shadow-soft lg:col-span-2 lg:row-span-2">
+      <div class="relative h-full">
+        <img
+          class="h-full min-h-[420px] w-full object-cover lg:aspect-[5/4] lg:min-h-0"
+          src="${escapeHtml(photoSrc)}"
+          alt="${escapeHtml(product.name)}."
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
+        ${badgeOverlayHtml(product)}
+        <div class="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
+          <h3 class="font-display text-3xl uppercase tracking-tight text-white sm:text-4xl lg:text-5xl">${escapeHtml(product.name)}</h3>
+          <p class="mt-3 max-w-md text-sm leading-6 text-white/85">${escapeHtml(product.description || "")}</p>
+          <p class="mt-3 text-xs font-extrabold uppercase tracking-[0.18em] text-mango">${priceSummary(product)}</p>
+          <a href="#preorder" class="mt-6 inline-flex rounded-full bg-mango px-6 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-onAccent transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/35">Order Now →</a>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function renderProductCard(product) {
+    const photoSrc = product.photo || placeholderSvg(product.name, 900, 600);
+    return `<article class="relative overflow-hidden rounded-[1.75rem] border border-edge bg-creamSoft shadow-sm">
+      <div class="relative">
+        <img
+          class="aspect-[4/3] w-full object-cover"
+          src="${escapeHtml(photoSrc)}"
+          alt="${escapeHtml(product.name)}."
+          loading="lazy"
+          decoding="async"
+        />
+        ${badgeSmallHtml(product)}
+      </div>
+      <div class="p-5 sm:p-6">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
+          <h3 class="font-display text-2xl uppercase tracking-tight text-ink">${escapeHtml(product.name)}</h3>
+          <div class="text-xs font-extrabold uppercase tracking-[0.18em] text-mango">${priceSummary(product)}</div>
+        </div>
+        <p class="mt-3 text-sm leading-6 text-muted">${escapeHtml(product.description || "")}</p>
+        ${chipsHtml(product)}
+        <a href="#preorder" class="mt-5 inline-flex w-full justify-center rounded-full bg-mango px-5 py-3 text-xs font-extrabold uppercase tracking-[0.18em] text-onAccent transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/35">Request ${escapeHtml(product.name)}</a>
+      </div>
+    </article>`;
+  }
+
+  // ─── How It Works ─────────────────────────────────────────────────────────────
 
   function renderHowItWorks() {
     setText("how-it-works-eyebrow", CONFIG.howItWorks.eyebrow);
-    setText("how-it-works-heading", CONFIG.howItWorks.heading);
+    renderHeadingLines(
+      "how-it-works-heading",
+      CONFIG.howItWorks.headingLines || CONFIG.howItWorks.heading,
+      {}
+    );
     const stepsEl = $("how-it-works-steps");
     if (!stepsEl) return;
-    stepsEl.innerHTML = CONFIG.howItWorks.steps
+    stepsEl.innerHTML = (CONFIG.howItWorks.steps || [])
       .map(
         (step, i) =>
-          `<article class="rounded-[1.5rem] bg-creamSoft p-7 shadow-sm">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-mango text-lg font-extrabold text-ink">${i + 1}</div>
-            <h3 class="mt-6 font-display text-2xl font-bold">${escapeHtml(step.title)}</h3>
+          `<article class="rounded-[1.5rem] border border-edge bg-cream p-7 shadow-sm">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-mango font-display text-2xl uppercase text-onAccent">${i + 1}</div>
+            <h3 class="mt-6 font-display text-xl uppercase tracking-tight text-ink sm:text-2xl">${escapeHtml(step.title)}</h3>
             <p class="mt-3 leading-7 text-muted">${escapeHtml(step.body)}</p>
           </article>`
       )
@@ -301,10 +534,14 @@
 
   function renderPreorderSection() {
     setText("preorder-eyebrow", CONFIG.preorder.sectionEyebrow);
-    setText("preorder-heading", CONFIG.preorder.sectionHeading);
-    setText("preorder-blurb", CONFIG.preorder.sectionBlurb);
-    setText("preorder-instructions", CONFIG.preorder.instructions);
-    setText("preorder-ig-handle-label", `DM us on Instagram: ${CONFIG.preorder.instagramHandleLabel}`);
+    renderHeadingLines(
+      "preorder-heading",
+      CONFIG.preorder.sectionHeadingLines || CONFIG.preorder.sectionHeading,
+      {}
+    );
+    setText("preorder-blurb", CONFIG.preorder.sectionBlurb || "");
+    setText("preorder-instructions", CONFIG.preorder.instructions || "");
+    setText("preorder-ig-handle-label", `DM us on Instagram: ${CONFIG.preorder.instagramHandleLabel || ""}`);
     setHref("preorder-ig-dm-link", CONFIG.preorder.instagramDmUrl);
   }
 
@@ -312,38 +549,123 @@
 
   function renderPaymentSection() {
     setText("payment-eyebrow", CONFIG.payment.eyebrow);
-    setText("payment-heading", CONFIG.payment.heading);
-    setText("payment-blurb", CONFIG.payment.blurb);
+    renderHeadingLines(
+      "payment-heading",
+      CONFIG.payment.headingLines || CONFIG.payment.heading,
+      {}
+    );
+    setText("payment-blurb", CONFIG.payment.blurb || "");
     const list = $("payment-list");
     if (list) {
-      list.innerHTML = CONFIG.preorder.paymentMethods
+      list.innerHTML = (CONFIG.preorder.paymentMethods || [])
         .map(
           (p) =>
-            `<li class="rounded-2xl border border-ube/10 bg-white px-5 py-4 font-extrabold text-ube">${escapeHtml(p)}</li>`
+            `<li class="rounded-2xl border border-edge bg-cream px-5 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-mango">${escapeHtml(p)}</li>`
         )
         .join("");
     }
   }
 
-  // ─── FAQ section ──────────────────────────────────────────────────────────────
+  // ─── Stats section ────────────────────────────────────────────────────────────
+
+  function renderStatsSection() {
+    const section = $("stats-section");
+    if (!section) return;
+    const cfg = CONFIG.stats;
+    if (!cfg || !cfg.enabled || !cfg.items || !cfg.items.length) {
+      section.hidden = true;
+      return;
+    }
+    section.hidden = false;
+    setText("stats-eyebrow", cfg.eyebrow || "");
+    renderHeadingLines("stats-heading", cfg.headingLines || cfg.heading, {});
+    const grid = $("stats-grid");
+    if (grid) {
+      grid.innerHTML = cfg.items
+        .map(
+          (item) =>
+            `<div class="rounded-2xl border border-edge bg-creamSoft px-4 py-10 text-center">
+              <p class="font-display text-5xl uppercase tracking-tight text-mango sm:text-6xl">${escapeHtml(item.value || "")}</p>
+              <p class="mt-3 eyebrow text-muted">${escapeHtml(item.label || "")}</p>
+            </div>`
+        )
+        .join("");
+    }
+  }
+
+  // ─── Reviews marquee ──────────────────────────────────────────────────────────
+
+  function renderReviewsSection() {
+    const section = $("reviews-section");
+    if (!section) return;
+    const cfg = CONFIG.reviews;
+    if (!cfg || !cfg.enabled || !cfg.items || !cfg.items.length) {
+      section.hidden = true;
+      return;
+    }
+    section.hidden = false;
+    setText("reviews-eyebrow", cfg.eyebrow || "");
+    renderHeadingLines("reviews-heading", cfg.headingLines || cfg.heading, {});
+
+    const track = $("reviews-track");
+    if (!track) return;
+
+    const cardHtml = (r) => {
+      const stars = "★".repeat(Math.max(0, Math.min(5, Number(r.stars) || 5)));
+      return `<article class="w-80 shrink-0 rounded-2xl border border-edge bg-cream p-5">
+        <p class="text-lg leading-none text-mango" aria-label="${r.stars || 5} out of 5 stars">${stars}</p>
+        <p class="mt-3 text-sm leading-6 text-ink">"${escapeHtml(r.body || "")}"</p>
+        <p class="mt-3 text-xs font-extrabold uppercase tracking-[0.18em] text-muted">— ${escapeHtml(r.author || "")} · ${escapeHtml(r.source || "")}</p>
+      </article>`;
+    };
+
+    const cards = cfg.items.map(cardHtml).join("");
+    track.innerHTML = cards + cards;
+  }
+
+  // ─── Big CTA strip ────────────────────────────────────────────────────────────
+
+  function renderBigCtaSection() {
+    const section = $("big-cta-section");
+    if (!section) return;
+    const cfg = CONFIG.bigCta;
+    if (!cfg || !cfg.enabled) { section.hidden = true; return; }
+    section.hidden = false;
+
+    setText("big-cta-eyebrow", cfg.eyebrow || "");
+    renderHeadingLines("big-cta-heading", cfg.headingLines || cfg.heading, {
+      colorMap: COLOR_MAP_ON_ACCENT
+    });
+    setText("big-cta-body", cfg.body || "");
+
+    const link = $("big-cta-link");
+    if (link && cfg.cta) {
+      link.textContent = cfg.cta.label || "Order Now →";
+      link.setAttribute("href", cfg.cta.href || "#preorder");
+    }
+  }
+
+  // ─── FAQ ──────────────────────────────────────────────────────────────────────
 
   function renderFaqSection() {
     setText("faq-eyebrow", CONFIG.faq.eyebrow);
-    setText("faq-heading", CONFIG.faq.heading);
+    renderHeadingLines(
+      "faq-heading",
+      CONFIG.faq.headingLines || CONFIG.faq.heading,
+      {}
+    );
     const list = $("faq-list");
     if (!list) return;
-    list.innerHTML = CONFIG.faq.items
+    list.innerHTML = (CONFIG.faq.items || [])
       .map(
         (item) =>
-          `<details class="group rounded-2xl border border-ube/10 bg-creamSoft p-6">
-            <summary class="cursor-pointer list-none font-display text-xl font-bold text-ink">${escapeHtml(item.q)}</summary>
+          `<details class="group rounded-2xl border border-edge bg-creamSoft p-6">
+            <summary class="cursor-pointer list-none font-display text-xl uppercase tracking-tight text-ink">${escapeHtml(item.q)}</summary>
             <p class="mt-4 leading-7 text-muted">${escapeHtml(item.a)}</p>
           </details>`
       )
       .join("");
   }
-
-  // ─── Legal notice ─────────────────────────────────────────────────────────────
 
   function renderLegal() {
     const el = $("legal-notice");
@@ -366,9 +688,7 @@
       if (CONFIG.social.instagramUrl) {
         ig.setAttribute("href", CONFIG.social.instagramUrl);
         ig.parentElement.hidden = false;
-      } else {
-        ig.parentElement.hidden = true;
-      }
+      } else { ig.parentElement.hidden = true; }
     }
 
     const tt = $("footer-tiktok");
@@ -376,13 +696,9 @@
       if (CONFIG.social.tiktokUrl) {
         tt.setAttribute("href", CONFIG.social.tiktokUrl);
         tt.parentElement.hidden = false;
-      } else {
-        tt.parentElement.hidden = true;
-      }
+      } else { tt.parentElement.hidden = true; }
     }
   }
-
-  // ─── Sticky bar ───────────────────────────────────────────────────────────────
 
   function renderStickyBar() {
     const igLink = $("sticky-instagram-link");
@@ -392,7 +708,7 @@
     }
   }
 
-  // ─── Pickup date helpers ──────────────────────────────────────────────────────
+  // ─── Pickup helpers ───────────────────────────────────────────────────────────
 
   function isDateSelectable(date) {
     return date.status === "open" || date.status === "limited";
@@ -406,7 +722,7 @@
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return (
-      CONFIG.pickup.dates
+      (CONFIG.pickup.dates || [])
         .filter(
           (d) =>
             isDateSelectable(d) &&
@@ -420,25 +736,23 @@
 
   function getDropLabel(date, isSoonest) {
     if (!isSoonest) return null;
-    if (!date.isoDate) return { label: "Next Drop", cls: "bg-mango/90 text-ink" };
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    if (!date.isoDate) return { label: "Next Drop", cls: "bg-mango text-onAccent" };
+    const today = new Date(); today.setHours(0, 0, 0, 0);
     const dropDate = new Date(date.isoDate + "T00:00:00");
     const diffDays = Math.round((dropDate - today) / 86400000);
-    if (diffDays >= 0 && diffDays <= 7) return { label: "This Week", cls: "bg-mango text-ink" };
-    return { label: "Next Drop", cls: "bg-mango/90 text-ink" };
+    if (diffDays >= 0 && diffDays <= 7) return { label: "This Week", cls: "bg-mango text-onAccent" };
+    return { label: "Next Drop", cls: "bg-mango text-onAccent" };
   }
 
-  // ─── Date picker (native radio) ───────────────────────────────────────────────
+  // ─── Date picker ──────────────────────────────────────────────────────────────
 
   function renderDateOptions() {
     const container = $("pickup-date-options");
     if (!container) return;
     container.innerHTML = "";
-
     const soonestId = getSoonestSelectableId();
 
-    CONFIG.pickup.dates.forEach((date) => {
+    (CONFIG.pickup.dates || []).forEach((date) => {
       const selectable = isDateSelectable(date);
       const isSelected = state.selectedDateId === date.id;
       const isSoonest = date.id === soonestId;
@@ -446,11 +760,11 @@
 
       const label = document.createElement("label");
       label.className = [
-        "block rounded-[1.5rem] border p-4 transition focus-within:ring-4 focus-within:ring-ube/15 sm:p-5",
+        "block rounded-[1.5rem] border p-4 transition focus-within:ring-4 focus-within:ring-mango/25 sm:p-5",
         isSelected
-          ? "border-ube bg-ube text-white shadow-soft"
-          : "border-blushDeep/20 bg-blush text-ink",
-        selectable ? "cursor-pointer hover:border-ube/35" : "cursor-not-allowed opacity-55 grayscale"
+          ? "border-mango bg-mango text-onAccent shadow-soft"
+          : "border-edge bg-creamSoft text-ink",
+        selectable ? "cursor-pointer hover:border-mango" : "cursor-not-allowed opacity-55 grayscale"
       ].join(" ");
 
       const input = document.createElement("input");
@@ -465,13 +779,17 @@
         `${date.weekday} ${date.dateLabel} — ${STATUS_TEXT[date.status] || date.status}`
       );
 
-      const detailCls = isSelected ? "text-white/80" : "text-muted";
-      const statusCls = isSelected ? "bg-white/15 text-mango" : "bg-white/80 text-ube";
-      const iconCls = isSelected ? "bg-white/15 text-mango" : "bg-white text-ube";
-      const tileCls = isSelected ? "bg-white/10" : "bg-white/70";
+      const detailCls = isSelected ? "text-onAccent/80" : "text-muted";
+      const statusCls = isSelected
+        ? "bg-onAccent/15 text-onAccent"
+        : "bg-cream text-mango";
+      const iconCls = isSelected
+        ? "bg-onAccent/15 text-onAccent"
+        : "bg-cream text-mango";
+      const tileCls = isSelected ? "bg-onAccent/10" : "bg-cream";
 
       const dropBadgeHtml = dropLabel
-        ? `<span class="rounded-full px-3 py-1 text-xs font-extrabold ${dropLabel.cls}">${escapeHtml(dropLabel.label)}</span>`
+        ? `<span class="rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] ${isSelected ? "bg-onAccent text-mango" : dropLabel.cls}">${escapeHtml(dropLabel.label)}</span>`
         : "";
 
       const content = document.createElement("span");
@@ -479,24 +797,24 @@
       content.innerHTML = `
         <span class="flex items-start justify-between gap-4">
           <span class="flex items-start gap-3">
-            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${iconCls} text-xs font-black uppercase tracking-wider">Cal</span>
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${iconCls} text-[10px] font-extrabold uppercase tracking-[0.14em]">Cal</span>
             <span>
-              <span class="block font-display text-3xl font-bold leading-none">${escapeHtml(date.weekday)}</span>
-              <span class="mt-1 block text-lg font-extrabold">${escapeHtml(date.dateLabel)}</span>
+              <span class="block font-display text-3xl uppercase leading-none tracking-tight">${escapeHtml(date.weekday)}</span>
+              <span class="mt-1 block text-base font-extrabold">${escapeHtml(date.dateLabel)}</span>
             </span>
           </span>
           <span class="flex flex-col items-end gap-1.5">
-            <span class="rounded-full px-3 py-1 text-xs font-extrabold ${statusCls}">${escapeHtml(STATUS_TEXT[date.status] || date.status)}</span>
+            <span class="rounded-full px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] ${statusCls}">${escapeHtml(STATUS_TEXT[date.status] || date.status)}</span>
             ${dropBadgeHtml}
           </span>
         </span>
         <span class="mt-4 grid gap-2 sm:grid-cols-2">
           <span class="rounded-2xl ${tileCls} px-4 py-3">
-            <span class="block text-xs font-extrabold uppercase tracking-[0.14em] ${detailCls}">Pickup window</span>
+            <span class="block text-[10px] font-extrabold uppercase tracking-[0.18em] ${detailCls}">Pickup window</span>
             <span class="mt-1 block text-sm font-extrabold">${escapeHtml(date.pickupWindow)}</span>
           </span>
           <span class="rounded-2xl ${tileCls} px-4 py-3">
-            <span class="block text-xs font-extrabold uppercase tracking-[0.14em] ${detailCls}">Preorder cutoff</span>
+            <span class="block text-[10px] font-extrabold uppercase tracking-[0.18em] ${detailCls}">Preorder cutoff</span>
             <span class="mt-1 block text-sm font-extrabold">${escapeHtml(date.preorderCutoffLabel)}</span>
           </span>
         </span>
@@ -508,8 +826,6 @@
     });
   }
 
-  // ─── Time picker (native radio) ───────────────────────────────────────────────
-
   function renderTimeOptions() {
     const container = $("pickup-time-options");
     if (!container) return;
@@ -519,7 +835,7 @@
     if (!selectedDate) {
       const p = document.createElement("p");
       p.className =
-        "rounded-2xl border border-dashed border-ube/20 bg-white/70 p-4 text-sm font-semibold text-muted sm:col-span-2";
+        "rounded-2xl border border-dashed border-edge bg-creamSoft p-4 text-sm font-semibold text-muted sm:col-span-2";
       p.textContent = "Select an available pickup date to view preferred pickup times.";
       container.appendChild(p);
       return;
@@ -535,10 +851,10 @@
 
       const label = document.createElement("label");
       label.className = [
-        "block rounded-2xl border p-4 cursor-pointer transition focus-within:ring-4 focus-within:ring-ube/15",
+        "block rounded-2xl border p-4 cursor-pointer transition focus-within:ring-4 focus-within:ring-mango/25",
         isSelected
-          ? "border-ube bg-ube text-white shadow-soft"
-          : "border-ube/10 bg-white text-ink hover:border-ube/35"
+          ? "border-mango bg-mango text-onAccent shadow-soft"
+          : "border-edge bg-cream text-ink hover:border-mango"
       ].join(" ");
 
       const input = document.createElement("input");
@@ -553,7 +869,7 @@
       content.setAttribute("aria-hidden", "true");
       content.innerHTML = `
         <span class="block font-extrabold">${escapeHtml(time)}</span>
-        <span class="mt-1 block text-sm ${isSelected ? "text-white/80" : "text-muted"}">Preferred pickup time</span>
+        <span class="mt-1 block text-xs font-extrabold uppercase tracking-[0.18em] ${isSelected ? "text-onAccent/80" : "text-muted"}">Preferred pickup time</span>
       `;
 
       label.appendChild(input);
@@ -561,8 +877,6 @@
       container.appendChild(label);
     });
   }
-
-  // ─── Time parser ──────────────────────────────────────────────────────────────
 
   function formatHour(h) {
     return `${h % 12 || 12} ${h >= 12 ? "PM" : "AM"}`;
@@ -686,13 +1000,13 @@
     const copyBtn = $("copy-message");
     if (copyBtn) {
       copyBtn.className =
-        "rounded-full border-2 border-white/60 px-6 py-4 text-sm font-extrabold text-white/80 transition hover:border-white hover:text-white focus:outline-none focus:ring-4 focus:ring-white/30";
+        "rounded-full border-2 border-edge px-6 py-4 text-sm font-extrabold uppercase tracking-[0.18em] text-muted transition hover:border-ink hover:text-ink focus:outline-none focus:ring-4 focus:ring-edge";
       copyBtn.textContent = "Copy again";
     }
     const igLink = $("preorder-ig-dm-link");
     if (igLink) {
       igLink.className =
-        "rounded-full bg-mango px-6 py-4 text-center text-sm font-extrabold text-ink transition hover:bg-mango/90 focus:outline-none focus:ring-4 focus:ring-mango/35";
+        "rounded-full bg-mango px-6 py-4 text-center text-sm font-extrabold uppercase tracking-[0.18em] text-onAccent transition hover:bg-mangoDeep focus:outline-none focus:ring-4 focus:ring-mango/35";
     }
   }
 
@@ -783,16 +1097,21 @@
     renderSeoMeta();
     renderFavicon();
     renderJsonLd();
+    renderAnnouncement();
     renderHeader();
     renderHero();
+    renderCountdown();
     renderAbout();
     renderAvailabilityBanner();
     renderMenuSection();
     renderHowItWorks();
     renderPreorderSection();
     renderPaymentSection();
+    renderStatsSection();
+    renderReviewsSection();
     renderFaqSection();
     renderLegal();
+    renderBigCtaSection();
     renderFooter();
     renderStickyBar();
 
